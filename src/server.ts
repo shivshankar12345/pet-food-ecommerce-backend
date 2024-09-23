@@ -1,7 +1,8 @@
+import "./config/config";
 import app from "./index";
 
 const PORT: number = parseInt(process.env.PORT as string) || 4000;
-app.listen(4000, (err?: any) => {
+app.listen(PORT, (err?: any) => {
   if (err) {
     console.log(`Error While Listening : ${PORT}`);
   }
