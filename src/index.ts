@@ -2,7 +2,6 @@
 import express, { Express, NextFunction, Request, Response } from "express";
 import cors from "cors";
 
-
 //* Internal Modules
 import mainRouter from "./routes";
 import ApplicationError from "./error/ApplicationError";
