@@ -1,4 +1,5 @@
 import { DataSource } from "typeorm";
+import { Product } from "../entity/product.entity";
 const AppDataSource = new DataSource({
   type: "mysql",
   host: process.env.DB_HOST,
@@ -7,6 +8,7 @@ const AppDataSource = new DataSource({
   password: process.env.DB_PASSWORD || "",
   database: process.env.DATABASE || "",
   connectorPackage: "mysql2",
+  entities:[Product],
   synchronize: true,
   logging: false,
 });

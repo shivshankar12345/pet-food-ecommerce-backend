@@ -1,0 +1,20 @@
+# Ignore build output directory
+dist/
+build/
+
+# Ignore TypeORM migration files
+src/migrations/
+src/subscriber/
+
+# Ignore TypeScript declaration files
+*.d.ts
+
+# Ignore configuration files
+*.config.js
+*.config.ts
+
+# Ignore tests directory
+src/tests/
+
+.env
+/node_modules
