@@ -2,7 +2,6 @@
 import express, { Express, NextFunction, Request, Response } from "express";
 import cors from "cors";
 
-
 //* Internal Modules
 import mainRouter from "./routes";
 import ApplicationError from "./error/ApplicationError";
@@ -29,9 +28,10 @@ app.use(mainRouter);
 
 //* Error Handling Middleware
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  console.log(err);
   if (err instanceof ApplicationError) {
-    res.status(err.statusCode).json({ success: false, message: err.message });
+    return res
+      .status(err.statusCode)
+      .json({ success: false, message: err.message });
   }
   return res
     .status(500)

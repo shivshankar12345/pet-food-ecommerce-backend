@@ -5,19 +5,19 @@ export class User {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column()
+  @Column({ default: null })
   name: string;
 
   @Column({ unique: true, nullable: false })
   email: string;
 
-  @Column({ unique: true, length: 10 })
+  @Column({ unique: true, length: 10, default: null })
   phone: string;
 
-  @Column({ type: "enum", enum: ["m", "f", "o"] })
+  @Column({ type: "enum", enum: ["m", "f", "o"], default: null })
   gender: string;
 
-  @Column()
+  @Column({ default: "customer" })
   role_id: string;
 
   @Column({ nullable: true })
@@ -32,6 +32,6 @@ export class User {
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   created_at: string;
 
-  @Column({ type: "timestamp" })
+  @Column({ type: "timestamp", default: null })
   updated_at: string;
 }

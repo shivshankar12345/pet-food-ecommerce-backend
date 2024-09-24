@@ -1,19 +1,27 @@
 import { AppDataSource } from "../db/data-source";
-import { ValidateOtpArgs } from "../types/otp.types";
+import { OTP, ValidateOtpArgs } from "../types/otp.types";
 import { generateOtp } from "../utils/otp";
 import { Otp } from "../entity/otp.entity";
 import ApplicationError from "../error/ApplicationError";
+import { v4 as uuid4 } from "uuid";
 
 const otpRepository = AppDataSource.getRepository(Otp);
 
 export default class OtpService {
-  static async sendOtp(email: string) {
+  static async getOtp(email: string) {
     const otp: string = generateOtp();
-    const data = new Otp();
-    data.email = email;
-    data.otp = otp;
-    const sentOtp = await otpRepository.save(data);
-    return sentOtp;
+    const data: OTP = {
+      id: uuid4(),
+      email,
+      otp,
+      created_at: new Date(),
+    };
+    // const data = new Otp();
+    // data.email = email;
+    // data.otp = otp;
+    // const sentOtp = await otpRepository.save(data);
+    // return sentOtp;
+    return data;
   }
 
   static async validateOtp(values: ValidateOtpArgs) {
@@ -26,7 +34,8 @@ export default class OtpService {
       }
       const currentTime = new Date();
       const otpGenerateTime = new Date(otpDoc.created_at);
-      if (currentTime - otpGenerateTime > 120000) {
+      if (currentTime.getTime() - otpGenerateTime.getTime() > 120000) {
+        throw new ApplicationError(101, "");
       }
       if (values.otp != otpDoc.otp) {
         throw new ApplicationError(400, "Incorrect Otp");
