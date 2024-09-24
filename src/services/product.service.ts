@@ -15,15 +15,23 @@ export class ProductService {
     }
   }
 
-  async getAllProducts(): Promise<Product[]> { 
+  async getAllProducts(
+    page: number,
+    limit: number
+  ): Promise<{ products: Product[]; total: number }> {
     try {
-      return await this.productRepository.find();
+      const [products, total] = await this.productRepository.findAndCount({
+        skip: (page - 1) * limit,
+        take: limit,
+      });
+
+      return { products, total };
     } catch (error) {
       throw new ApplicationError(500, "Error fetching products");
     }
   }
 
-  async getProductById(id: number): Promise<Product> { 
+  async getProductById(id: number): Promise<Product> {
     try {
       const product = await this.productRepository.findOneBy({ id });
       if (!product) {
@@ -35,11 +43,14 @@ export class ProductService {
     }
   }
 
-  async updateProduct(id: number, productData: Partial<ProductType>): Promise<Product> {
+  async updateProduct(
+    id: number,
+    productData: Partial<ProductType>
+  ): Promise<Product> {
     try {
-      await this.getProductById(id); 
+      await this.getProductById(id);
       await this.productRepository.update(id, productData);
-      return await this.getProductById(id); 
+      return await this.getProductById(id);
     } catch (error) {
       throw new ApplicationError(500, "Error updating product");
     }
@@ -47,7 +58,7 @@ export class ProductService {
 
   async deleteProduct(id: number): Promise<void> {
     try {
-      await this.getProductById(id); 
+      await this.getProductById(id);
       await this.productRepository.delete(id);
     } catch (error) {
       throw new ApplicationError(500, "Error deleting product");
