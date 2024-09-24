@@ -1,4 +1,7 @@
 import { DataSource } from "typeorm";
+import { User } from "../entity/user.entity";
+import { Otp } from "../entity/otp.entity";
+
 export const AppDataSource = new DataSource({
   type: "mysql",
   host: process.env.DB_HOST,
@@ -6,8 +9,8 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USERNAME || "",
   password: process.env.DB_PASSWORD || "",
   database: process.env.DATABASE || "",
-  connectorPackage: "mysql2",
-  synchronize: true,
+  entities: [User, Otp],
+  synchronize: false,
   logging: false,
 });
 

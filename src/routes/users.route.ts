@@ -1,33 +1,13 @@
-import { NextFunction, Request, Response, Router } from "express";
-import ApplicationError from "../error/ApplicationError";
-import { AppDataSource } from "../db/data-source";
-import { User } from "../entity/user.entity";
+import { Router } from "express";
+import UserController from "../controllers/users.controller";
 
 const userRouter = Router();
-const userRepository = AppDataSource.getRepository(User);
-userRouter.post(
-  "/signup",
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { name, email, phone, password, role, gender } = req.body;
-      if (!name || !email || !phone || !password || !role || !gender) {
-        throw new ApplicationError(406, "Please fill Required fields");
-      }
+const userController: UserController = new UserController();
 
-      const newUser = await userRepository.save(req.body);
-      console.log(newUser);
-      res.status(200).json({ success: true, message: "User Created" });
-    } catch (error) {
-      console.log(error);
-      next(error);
-    }
-  }
-);
+userRouter.post("/sendOtp", userController.sendOtp);
 
-userRouter.post(
-  "/signin",
-  (req: Request, res: Response, next: NextFunction) => {
-    res.status(200).json({ success: true, message: "Singin Successfully !!" });
-  }
-);
+userRouter.post("/validateOtp", userController.validateOtp);
+
+userRouter.patch("/update", userController.validateOtp);
+
 export default userRouter;

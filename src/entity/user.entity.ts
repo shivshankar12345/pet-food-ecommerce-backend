@@ -1,27 +1,24 @@
 import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity()
+@Entity("User")
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
   @Column()
   name: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: false })
   email: string;
 
   @Column({ unique: true, length: 10 })
   phone: string;
 
-  @Column("enum")
-  gender: "m" | "f" | "o";
+  @Column({ type: "enum", enum: ["m", "f", "o"] })
+  gender: string;
 
   @Column()
   role_id: string;
-
-  @Column()
-  password: string;
 
   @Column({ nullable: true })
   pan_num: string;
@@ -32,9 +29,9 @@ export class User {
   @Column({ nullable: true })
   gst_num: string;
 
-  @Column({ default: new Date() })
-  created_at: Date;
+  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
+  created_at: string;
 
-  @Column({ nullable: true })
-  updated_at: Date;
+  @Column({ type: "timestamp" })
+  updated_at: string;
 }
