@@ -23,6 +23,7 @@ export class ProductService {
       const [products, total] = await this.productRepository.findAndCount({
         skip: (page - 1) * limit,
         take: limit,
+        where: { isDeleted: false },
       });
 
       return { products, total };
@@ -33,7 +34,10 @@ export class ProductService {
 
   async getProductById(id: number): Promise<Product> {
     try {
-      const product = await this.productRepository.findOneBy({ id });
+      const product = await this.productRepository.findOne({
+        where: { id, isDeleted: false },
+      });
+
       if (!product) {
         throw new ApplicationError(404, "Product not found");
       }
@@ -45,12 +49,16 @@ export class ProductService {
 
   async updateProduct(
     id: number,
-    productData: Partial<ProductType>
+    productData: Partial<Product>
   ): Promise<Product> {
     try {
-      await this.getProductById(id);
-      await this.productRepository.update(id, productData);
-      return await this.getProductById(id);
+      const existingProduct = await this.getProductById(id);
+      const updatedProduct = {
+        ...existingProduct,
+        ...productData,
+      };
+      await this.productRepository.save(updatedProduct);
+      return updatedProduct;
     } catch (error) {
       throw new ApplicationError(500, "Error updating product");
     }
@@ -58,8 +66,10 @@ export class ProductService {
 
   async deleteProduct(id: number): Promise<void> {
     try {
-      await this.getProductById(id);
-      await this.productRepository.delete(id);
+      const existingProduct = await this.getProductById(id);
+
+      existingProduct.isDeleted = true;
+      await this.productRepository.save(existingProduct);
     } catch (error) {
       throw new ApplicationError(500, "Error deleting product");
     }

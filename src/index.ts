@@ -11,7 +11,7 @@ const app: Express = express();
 
 //* Middlewares
 app.use(
-  cors({ methods: ["GET", "POST", "PUT", "DELETE"], origin: "localhost" })
+  cors({ methods: ["GET", "POST", "PUT","PATCH", "DELETE"], origin: "localhost" })
 );
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());

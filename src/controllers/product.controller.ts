@@ -19,7 +19,7 @@ export const createProduct = async (req: Request, res: Response) => {
       petType,
     } = req.body;
 
-    const validationData = await checkRequiredValidation([
+    const validationData: any = await checkRequiredValidation([
       { field: "Name", value: name, type: "Empty" },
       { field: "Category ID", value: categoryId, type: "Empty" },
       { field: "Price", value: price, type: "Empty" },
@@ -88,6 +88,134 @@ export const getAllProducts = async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
+    if (error instanceof ApplicationError) {
+      return res
+        .status(error.statusCode)
+        .json({ success: false, message: error.message });
+    }
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+export const getProductById = async (req: Request, res: Response) => {
+  try {
+    const id = req.query.id as string | null;
+    if (!id) {
+      return res.status(400).json({ message: "Product ID is required." });
+    }
+    const validationData = await checkRequiredValidation([
+      { field: "Product ID", value: id, type: "Empty" },
+    ]);
+
+    if (!validationData.status) {
+      return res.status(400).json({ message: validationData.message });
+    }
+
+  
+
+    const product = await productService.getProductById(parseInt(id,10));
+
+    if (!product) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Product not found" });
+    }
+
+    return res.status(200).json({ success: true, data: product });
+  } catch (error: any) {
+    if (error instanceof ApplicationError) {
+      return res.status(error.statusCode).json({ message: error.message });
+    }
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const updateProduct = async (req: Request, res: Response) => {
+  try {
+    const id = req.query.id as string | null;
+
+    if (!id) {
+      return res.status(400).json({ message: "Product ID is required." });
+    }
+
+    const validationData = await checkRequiredValidation([
+      { field: "Product ID", value: id, type: "Empty" },
+    ]);
+
+    if (!validationData.status) {
+      return res.status(400).json({ message: validationData.message });
+    }
+
+    const existingProduct = await productService.getProductById(
+      parseInt(id, 10)
+    );
+
+    if (!existingProduct) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Product not found" });
+    }
+
+    // Prepare product data for update
+    const productData: Partial<ProductType> = {
+      ...req.body,
+      id: existingProduct.id, // Keep the existing ID
+      imageUrl: req.file ? req.file.path : existingProduct.imageUrl,
+      createdAt: existingProduct.createdAt, // Retain existing createdAt
+      updatedAt: new Date(),
+    };
+
+    const updatedProduct = await productService.updateProduct(
+      existingProduct.id,
+      productData
+    );
+
+    return res.status(200).json({ success: true, data: updatedProduct });
+  } catch (error: any) {
+    if (error instanceof ApplicationError) {
+      return res
+        .status(error.statusCode)
+        .json({ success: false, message: error.message });
+    }
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
+  }
+};
+export const deleteProduct = async (req: Request, res: Response) => {
+  try {
+    const id = req.query.id as string | null;
+
+    if (!id) {
+      return res.status(400).json({ message: "Product ID is required." });
+    }
+
+    const validationData = await checkRequiredValidation([
+      { field: "Product ID", value: id, type: "Empty" },
+    ]);
+
+    if (!validationData.status) {
+      return res.status(400).json({ message: validationData.message });
+    }
+
+    const productId = parseInt(id, 10);
+    const existingProduct = await productService.getProductById(productId);
+
+    if (!existingProduct) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Product not found" });
+    }
+
+    // Perform soft delete by setting isDeleted to true
+    await productService.deleteProduct(productId);
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Product deleted successfully" });
+  } catch (error: any) {
     if (error instanceof ApplicationError) {
       return res
         .status(error.statusCode)
