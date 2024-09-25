@@ -3,5 +3,5 @@ import userRouter from "./users.route";
 
 const mainRouter = Router();
 
-mainRouter.use("/users", userRouter);
+mainRouter.use("/api/users", userRouter);
 export default mainRouter;

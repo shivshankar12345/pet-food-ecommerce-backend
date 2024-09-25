@@ -10,9 +10,7 @@ import ApplicationError from "./error/ApplicationError";
 const app: Express = express();
 
 //* Middlewares
-app.use(
-  cors({ methods: ["GET", "POST", "PUT", "DELETE"], origin: "localhost" })
-);
+app.use(cors({ methods: ["GET", "POST", "PUT", "DELETE"], origin: "*" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 

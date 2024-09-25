@@ -1,7 +1,6 @@
 import { DataSource } from "typeorm";
 import { User } from "../entity/user.entity";
-// import { Otp } from "../entity/otp.entity";
-// import { Product } from "../entity/product.entity";
+import { Product } from "../entity/product.entity";
 
 export const AppDataSource = new DataSource({
   type: "mysql",
@@ -12,13 +11,10 @@ export const AppDataSource = new DataSource({
   database: process.env.DATABASE || "",
   connectorPackage: "mysql2",
   entities: [User],
-  //  Otp],
-
-  synchronize: true,
+  synchronize: false,
   logging: false,
 });
 
-console.log(process.env.DB_USERNAME, process.env.DB_PASSWORD);
 export const connectToDb = async () => {
   try {
     await AppDataSource.initialize();
