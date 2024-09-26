@@ -12,7 +12,10 @@ const app: Express = express();
 
 //* Middlewares
 app.use(
-  cors({ methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], origin: "*" })
+  cors({
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    origin: "localhost",
+  })
 );
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -28,6 +31,7 @@ app.use(mainRouter);
 
 //* Error Handling Middleware
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  console.log(err);
   if (err instanceof ApplicationError) {
     return Responses.generateErrorResponse(res, err.statusCode, {
       message: err.message,
