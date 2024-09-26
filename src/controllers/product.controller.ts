@@ -3,6 +3,8 @@ import { ProductService } from "../services/product.service";
 import { Product as ProductType } from "../types/product.types";
 import ApplicationError from "../error/ApplicationError";
 import { checkRequiredValidation } from "../modules/validation";
+import { uploadToCloudinary } from "../utils/cloudinary"; //using cloudnairy here
+import { Category, PetType } from "../utils/enum";
 
 const productService = new ProductService();
 
@@ -34,14 +36,27 @@ export const createProduct = async (req: Request, res: Response) => {
       return res.status(400).json({ message: validationData.message });
     }
 
-    const imageUrl = req.file?.path;
-    if (!imageUrl) {
+    if (!Object.values(Category).includes(categoryId)) {
+      return res.status(400).json({ message: "Invalid category" });
+    }
+    if (!Object.values(PetType).includes(petType)) {
+      return res.status(400).json({ message: "Invalid pet Types" });
+    }
+
+    const imageFile = req.file;
+    if (!imageFile) {
       return res.status(400).json({ message: "Image file is required." });
     }
 
+    const CloudinaryResponse = await uploadToCloudinary(
+      imageFile.path,
+      "products"
+    );
+    const imageUrl = CloudinaryResponse.secure_url;
+
     const productData: ProductType = {
       name,
-      categoryId: parseInt(categoryId, 10),
+      categoryId,
       price: parseFloat(price),
       description,
       stock: parseInt(stock, 10),
@@ -113,9 +128,7 @@ export const getProductById = async (req: Request, res: Response) => {
       return res.status(400).json({ message: validationData.message });
     }
 
-  
-
-    const product = await productService.getProductById(parseInt(id,10));
+    const product = await productService.getProductById(parseInt(id, 10));
 
     if (!product) {
       return res
@@ -157,12 +170,34 @@ export const updateProduct = async (req: Request, res: Response) => {
         .status(404)
         .json({ success: false, message: "Product not found" });
     }
-
+    if (
+      req.body.petType &&
+      !Object.values(PetType).includes(req.body.petType)
+    ) {
+      return res.status(400).json({ message: "Invalid Pet Type." });
+    }
+    if (
+      req.body.categoryId &&
+      !Object.values(Category).includes(req.body.categoryId)
+    ) {
+      return res.status(400).json({ message: "Invalid category" });
+    }
+    let imageUrl;
+    if (req.file) {
+      const CloudinaryResponse = await uploadToCloudinary(
+        req.file?.path,
+        "products"
+      );
+      imageUrl = CloudinaryResponse.secure_url;
+    } else {
+      imageUrl = existingProduct.imageUrl;
+    }
     // Prepare product data for update
     const productData: Partial<ProductType> = {
       ...req.body,
+      imageUrl,
       id: existingProduct.id, // Keep the existing ID
-      imageUrl: req.file ? req.file.path : existingProduct.imageUrl,
+
       createdAt: existingProduct.createdAt, // Retain existing createdAt
       updatedAt: new Date(),
     };
@@ -184,6 +219,7 @@ export const updateProduct = async (req: Request, res: Response) => {
       .json({ success: false, message: "Internal Server Error" });
   }
 };
+
 export const deleteProduct = async (req: Request, res: Response) => {
   try {
     const id = req.query.id as string | null;
