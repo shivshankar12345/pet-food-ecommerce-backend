@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column,CreateDateColumn,UpdateDateColumn } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
 import { Category, PetType } from "../utils/enum";
 
 @Entity("products")
@@ -9,7 +15,7 @@ export class Product {
   @Column()
   name: string;
 
-  @Column({ type:"enum",enum:Category })
+  @Column({ type: "enum", enum: Category })
   categoryId: Category;
 
   @Column({ type: "decimal", precision: 10, scale: 2 })
@@ -32,14 +38,13 @@ export class Product {
 
   @Column({ type: "enum", enum: PetType, nullable: true })
   petType: PetType;
-  
+
   @Column({ default: false })
-  isDeleted: boolean; 
-  
+  isDeleted: boolean;
+
   @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt: Date;
 
   @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt: Date;
- 
 }

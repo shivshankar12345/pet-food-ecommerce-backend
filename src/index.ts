@@ -5,41 +5,49 @@ import cors from "cors";
 //* Internal Modules
 import mainRouter from "./routes";
 import ApplicationError from "./error/ApplicationError";
+import Responses from "./modules/responses";
 
 //* Initialize Server
 const app: Express = express();
 
 //* Middlewares
 app.use(
-  cors({ methods: ["GET", "POST", "PUT","PATCH", "DELETE"], origin: "localhost" })
+  cors({
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    origin: "localhost",
+  })
 );
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-//* Home Route
-app.get("/", (req: Request, res: Response): void => {
-  res
-    .status(200)
-    .json({ success: true, message: "Nodejs with Typescript Running !!" });
+//* Routes
+app.get("/", (req: Request, res: Response) => {
+  return Responses.generateSuccessResponse(res, 200, {
+    message: "Nodejs with Typescript Running !!",
+  });
 });
 
-//* Routes for Features
 app.use(mainRouter);
 
 //* Error Handling Middleware
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  console.log(err)
+  console.log(err);
   if (err instanceof ApplicationError) {
-    res.status(err.statusCode).json({ success: false, message: err.message });
+    return Responses.generateErrorResponse(res, err.statusCode, {
+      message: err.message,
+    });
   }
-  return res
-    .status(500)
-    .json({ success: false, message: "Internal Server Error" });
+
+  Responses.generateErrorResponse(res, 500, {
+    message: "Internal Server Error",
+  });
 });
 
 //* Invalid path
 app.use((req: Request, res: Response, next: NextFunction) => {
-  res.status(404).json({ success: false, message: "Resource not found" });
+  return Responses.generateErrorResponse(res, 404, {
+    message: "Resource not found",
+  });
 });
 
 export default app;
