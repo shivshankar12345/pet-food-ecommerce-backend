@@ -3,11 +3,11 @@ import {
   AccessAndRefreshTokenData,
   AccessTokenData,
   RefreshTokenData,
-  VerifyTokenPayload,
 } from "../types/token.types";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
 export default class AuthTokens {
+  //* Generation of Tokens
   static generateAccessToken(id: string): AccessTokenData {
     const accessToken = jwt.sign(
       { id },
@@ -28,7 +28,15 @@ export default class AuthTokens {
     return { refreshToken };
   }
 
-  static verifyAccessToken(token: string): JwtPayload | string | void {
+  //* Generate Both Token using a Single function
+  static generateAccessAndRefreshToken(id: string): AccessAndRefreshTokenData {
+    const { accessToken } = this.generateAccessToken(id);
+    const { refreshToken } = this.generateRefreshToken(id);
+    return { accessToken, refreshToken };
+  }
+
+  //* Verification of Tokens
+  static verifyAccessToken(token: string): JwtPayload | string {
     try {
       const payload = jwt.verify(
         token,
@@ -40,7 +48,7 @@ export default class AuthTokens {
     }
   }
 
-  static verifyRefreshToken(token: string): JwtPayload | string | void {
+  static verifyRefreshToken(token: string): JwtPayload | string {
     try {
       const payload = jwt.verify(
         token,
@@ -50,11 +58,5 @@ export default class AuthTokens {
     } catch (error) {
       throw new ApplicationError(401, "UnAuthorizedAccess");
     }
-  }
-
-  static generateAccessAndRefreshToken(id: string): AccessAndRefreshTokenData {
-    const { accessToken } = this.generateAccessToken(id);
-    const { refreshToken } = this.generateRefreshToken(id);
-    return { accessToken, refreshToken };
   }
 }

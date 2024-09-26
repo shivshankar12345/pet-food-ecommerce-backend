@@ -7,6 +7,7 @@ import AuthTokens from "../utils/tokens";
 import { UpdateUser } from "../types/user.types";
 import { v4 as uuidv4 } from "uuid";
 import { generateOtp } from "../utils/otp";
+import Responses from "../modules/responses";
 
 let generatedOtp: OTP | null = null;
 const userService = new UserService();
@@ -26,8 +27,7 @@ export default class UserController {
       };
       generatedOtp = { ...data };
       sendMail(email, data.otp);
-      return res.status(200).json({
-        success: true,
+      return Responses.generateSuccessResponse(res, 200, {
         data: {
           id: data.id,
           created_at: data.created_at,
@@ -62,9 +62,11 @@ export default class UserController {
       generatedOtp = null;
       const { accessToken, refreshToken } =
         AuthTokens.generateAccessAndRefreshToken(user.id);
-      return res
-        .status(201)
-        .json({ success: true, accessToken, refreshToken, auth: true });
+      return Responses.generateSuccessResponse(res, 201, {
+        accessToken,
+        refreshToken,
+        auth: true,
+      });
     } catch (error) {
       next(error);
     }
@@ -107,7 +109,7 @@ export default class UserController {
       }
 
       const updatedUser = await userService.updateUser(data_to_update);
-      return res.status(200).json({ success: true, user: updatedUser });
+      return Responses.generateSuccessResponse(res, 200, { user: updatedUser });
     } catch (error) {
       next(error);
     }
