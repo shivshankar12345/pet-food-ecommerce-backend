@@ -10,7 +10,7 @@ export const AppDataSource = new DataSource({
   password: process.env.DB_PASSWORD || "",
   database: process.env.DATABASE || "",
   connectorPackage: "mysql2",
-  entities: [Product],
+  entities: [Product, User],
   synchronize: false,
   // migrations: ["src/migration/**/*.ts"],
   // logging: ["query","error"],
