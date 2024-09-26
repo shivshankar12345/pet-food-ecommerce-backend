@@ -2,7 +2,6 @@
 import express, { Express, NextFunction, Request, Response } from "express";
 import cors from "cors";
 
-
 //* Internal Modules
 import mainRouter from "./routes";
 import ApplicationError from "./error/ApplicationError";
@@ -12,7 +11,7 @@ const app: Express = express();
 
 //* Middlewares
 app.use(
-  cors({ methods: ["GET", "POST", "PUT", "DELETE"], origin: "localhost" })
+  cors({ methods: ["GET", "POST", "PUT","PATCH", "DELETE"], origin: "localhost" })
 );
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -29,6 +28,7 @@ app.use(mainRouter);
 
 //* Error Handling Middleware
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  console.log(err)
   if (err instanceof ApplicationError) {
     res.status(err.statusCode).json({ success: false, message: err.message });
   }

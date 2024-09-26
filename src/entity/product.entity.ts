@@ -1,43 +1,45 @@
-import {
-    Entity,
-    PrimaryGeneratedColumn,
-    Column,
-    
-  } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column,CreateDateColumn,UpdateDateColumn } from "typeorm";
+import { Category, PetType } from "../utils/enum";
+
+@Entity("products")
+export class Product {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  name: string;
+
+  @Column({ type:"enum",enum:Category })
+  categoryId: Category;
+
+  @Column({ type: "decimal", precision: 10, scale: 2 })
+  price: number;
+
+  @Column({ type: "text", nullable: true })
+  description: string;
+
+  @Column()
+  stock: number;
+
+  @Column({ name: "image_url", nullable: false })
+  imageUrl: string;
+
+  @Column({ name: "brand_id", nullable: true })
+  brandId: number;
+
+  @Column({ name: "seller_id" })
+  sellerId: number;
+
+  @Column({ type: "enum", enum: PetType, nullable: true })
+  petType: PetType;
   
-  @Entity('products')
-  export class Product {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @Column({ default: false })
+  isDeleted: boolean; 
   
-    @Column()
-    name: string;
-  
-    @Column({ name: 'category_id' })
-    categoryId: number;
-  
-    @Column({ type: 'decimal', precision: 10, scale: 2 })
-    price: number;
-  
-    @Column({ type: 'text', nullable: true })
-    description: string;
-  
-    @Column()
-    stock: number;
-  
-    @Column({ name: 'image_url', nullable: true })
-    imageUrl: string;
-  
-    @Column({ name: 'brand_id', nullable: true })
-    brandId: number;
-  
-    @Column({ name: 'seller_id'})
-    sellerId: number;
-  
-    @Column({ name: 'pet_type', nullable: true })
-    petType: string;
-  
+  @CreateDateColumn({ name: "created_at", type: "timestamp" })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
+  updatedAt: Date;
  
-    
-  }
-  
+}
