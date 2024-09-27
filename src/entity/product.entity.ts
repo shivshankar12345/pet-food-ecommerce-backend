@@ -7,7 +7,7 @@ import {
 } from "typeorm";
 import { Category, PetType } from "../utils/enum";
 
-@Entity("products")
+@Entity("Products")
 export class Product {
   @PrimaryGeneratedColumn()
   id: number;

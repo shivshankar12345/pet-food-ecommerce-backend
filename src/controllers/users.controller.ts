@@ -8,6 +8,7 @@ import { UpdateUser } from "../types/user.types";
 import { v4 as uuidv4 } from "uuid";
 import { generateOtp } from "../utils/otp";
 import Responses from "../modules/responses";
+import { AppDataSource } from "../db/data-source";
 
 let generatedOtp: OTP | null = null;
 const userService = new UserService();
