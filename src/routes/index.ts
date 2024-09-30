@@ -8,7 +8,7 @@ const mainRouter = Router();
 
 mainRouter.use("/products", productroutes);
 
-mainRouter.use("/user", userRouter);
+mainRouter.use("/api/users", userRouter);
 
 mainRouter.use("/api/admin-panel", adminRouter);
 

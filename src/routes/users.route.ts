@@ -18,8 +18,12 @@ userRouter.post(
   "/refreshToken",
   validateRefreshToken,
   (req: Request, res: Response, next: NextFunction) => {
-    const { accessToken } = AuthTokens.generateAccessToken((req as any).user);
-    return Responses.generateSuccessResponse(res, 200, { accessToken });
+    try {
+      const { accessToken } = AuthTokens.generateAccessToken((req as any).user);
+      return Responses.generateSuccessResponse(res, 200, { accessToken });
+    } catch (error) {
+      next(error);
+    }
   }
 );
 
