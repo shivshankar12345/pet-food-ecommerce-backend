@@ -13,7 +13,7 @@ const app: Express = express();
 //* Middlewares
 app.use(
   cors({
-    methods: ["GET", "POST", "PUT", "PATCH","PATCH", "DELETE"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     origin: "localhost",
   })
 );

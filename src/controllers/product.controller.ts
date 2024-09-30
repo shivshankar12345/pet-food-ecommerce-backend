@@ -49,7 +49,7 @@ export const createProduct = async (
     }
 
     const imageFile = req.file; // This is the uploaded file
-    console.log("Uploaded file:", imageFile); // Log the uploaded file
+    console.log("Uploaded file:", imageFile);
     if (!imageFile) {
       throw new ApplicationError(400, "Image file is required");
     }

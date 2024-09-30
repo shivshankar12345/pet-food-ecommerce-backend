@@ -1,5 +1,9 @@
-import { v2 as cloudinary, UploadApiResponse, UploadApiErrorResponse } from 'cloudinary';
-import ApplicationError from '../error/ApplicationError';
+import {
+  v2 as cloudinary,
+  UploadApiResponse,
+  UploadApiErrorResponse,
+} from "cloudinary";
+import ApplicationError from "../error/ApplicationError";
 
 // Configure Cloudinary
 cloudinary.config({
@@ -9,20 +13,29 @@ cloudinary.config({
 });
 
 // Function to upload an image to Cloudinary directly from memory
-export const uploadToCloudinary = (file: Express.Multer.File, folder: string): Promise<UploadApiResponse> => {
+export const uploadToCloudinary = (
+  file: Express.Multer.File,
+  folder: string
+): Promise<UploadApiResponse> => {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       { folder: folder },
-      (error: UploadApiErrorResponse | undefined, result: UploadApiResponse | undefined) => {
+      (
+        error: UploadApiErrorResponse | undefined,
+        result: UploadApiResponse | undefined
+      ) => {
         if (error) {
-          console.error("Cloudinary upload error:", error); // Log the error
-          return reject(new ApplicationError(500, 'Error uploading to Cloudinary'));
+          console.error("Cloudinary upload error:", error);
+          const errorMessage = error.message || "Error uploading to Cloudinary";
+          return reject(new ApplicationError(500, errorMessage));
         }
 
         // Check if result is defined
         if (!result) {
           console.error("No response from Cloudinary"); // Log if no result
-          return reject(new ApplicationError(500, 'No response from Cloudinary'));
+          return reject(
+            new ApplicationError(500, "No response from Cloudinary")
+          );
         }
 
         return resolve(result);
@@ -35,11 +48,13 @@ export const uploadToCloudinary = (file: Express.Multer.File, folder: string): P
 };
 
 // Function to delete an image from Cloudinary by public ID
-export const deleteFromCloudinary = async (publicId: string) => {
-  try {
-    const result = await cloudinary.uploader.destroy(publicId);
-    return result;
-  } catch (err: any) {
-    throw new ApplicationError(500, 'Internal server error while deleting from Cloudinary');
-  }
-};
+// export const deleteFromCloudinary = async (publicId: string) => {
+//   try {
+//     const result = await cloudinary.uploader.destroy(publicId);
+//     return result;
+//   } catch (err: any) {
+//     const errorMessage =
+//       err.message || "Internal server error while deleting from Cloudinary";
+//     throw new ApplicationError(500, errorMessage);
+//   }
+// };
