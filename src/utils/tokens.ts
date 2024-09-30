@@ -1,3 +1,5 @@
+import { AppDataSource } from "../db/data-source";
+import { Token } from "../entity/token.entity";
 import ApplicationError from "../error/ApplicationError";
 import {
   AccessAndRefreshTokenData,
@@ -25,6 +27,9 @@ export default class AuthTokens {
         expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
       }
     );
+    AppDataSource.getRepository(Token).save({
+      token: refreshToken,
+    });
     return { refreshToken };
   }
 
