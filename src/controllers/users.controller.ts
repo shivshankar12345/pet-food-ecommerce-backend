@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from "uuid";
 import { generateOtp } from "../utils/otp";
 import Responses from "../modules/responses";
 import { AppDataSource } from "../db/data-source";
+import { User } from "../entity/user.entity";
 
 let generatedOtp: OTP | null = null;
 const userService = new UserService();
@@ -57,12 +58,15 @@ export default class UserController {
       if (generatedOtp?.otp != otp) {
         throw new ApplicationError(401, "Invalid OTP");
       }
+
       const user = await userService.saveUser({
         email: generatedOtp?.email as string,
       });
-      generatedOtp = null;
       const { accessToken, refreshToken } =
         AuthTokens.generateAccessAndRefreshToken(user.id);
+      generatedOtp = null;
+      user.token = refreshToken;
+      await AppDataSource.getRepository(User).save(user);
       return Responses.generateSuccessResponse(res, 201, {
         accessToken,
         refreshToken,

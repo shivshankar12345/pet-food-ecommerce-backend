@@ -1,8 +1,7 @@
 import { DataSource } from "typeorm";
 import { User } from "../entity/user.entity";
 import { Product } from "../entity/product.entity";
-import { Role } from "../entity/role.entity";
-import { Permission } from "../entity/permission.entity";
+import { Token } from "../entity/token.entity";
 
 export const AppDataSource = new DataSource({
   type: "mysql",
@@ -12,10 +11,8 @@ export const AppDataSource = new DataSource({
   password: process.env.DB_PASSWORD || "",
   database: process.env.DATABASE || "",
   connectorPackage: "mysql2",
-  entities: [Permission, Role, User, Product],
-  synchronize: true,
-  // migrations: ["src/migration/**/*.ts"],
-  // logging: ["query","error"],
+  entities: [User, Token, Product],
+  synchronize: false,
 });
 
 export const connectToDb = async () => {

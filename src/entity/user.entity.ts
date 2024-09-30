@@ -24,9 +24,8 @@ export class User {
   @Column({ type: "enum", enum: ["m", "f", "o"], default: null })
   gender: string;
 
-  @OneToOne(() => Role)
-  @JoinColumn()
-  role: Role;
+  @Column({ nullable: true, default: null })
+  role: string;
 
   @Column({ nullable: true })
   pan_num: string;
@@ -42,6 +41,9 @@ export class User {
 
   @Column({ default: true })
   is_active: boolean;
+
+  @Column({ nullable: true })
+  token: string;
 
   @Column({ default: null })
   deleted_at: string;

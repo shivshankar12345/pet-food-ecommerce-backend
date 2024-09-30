@@ -11,5 +11,5 @@ mainRouter.use("/api/users", userRouter);
 
 mainRouter.use("/products", productroutes);
 
-mainRouter.use("/api/admin-panel", jwtAuth, validateAdmin, adminRouter);
+mainRouter.use("/api/admin-panel", adminRouter);
 export default mainRouter;

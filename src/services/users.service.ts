@@ -1,11 +1,10 @@
 import { AppDataSource } from "../db/data-source";
-import { Role } from "../entity/role.entity";
 import { User } from "../entity/user.entity";
 import ApplicationError from "../error/ApplicationError";
 import { SaveUserParams } from "../types/user.types";
 import { UpdateUser } from "../types/user.types";
+
 const userRepository = AppDataSource.getRepository(User);
-const roleRepository = AppDataSource.getRepository(Role);
 export default class UserService {
   async updateUser(user: UpdateUser) {
     try {
@@ -21,18 +20,13 @@ export default class UserService {
       });
       await userRepository.save(updatedUser);
       return updatedUser;
+      return updatedUser;
     } catch (error) {
       throw error;
     }
   }
   async saveUser(user: SaveUserParams) {
     try {
-      const customerRole = await roleRepository.findOne({
-        where: { role_name: "customer" },
-      });
-      if (!customerRole) {
-        throw new ApplicationError(500, "Something went wrong");
-      }
       const existingUser = await userRepository.findOne({
         where: { email: user.email },
       });
@@ -41,7 +35,6 @@ export default class UserService {
       }
       const newUser = await userRepository.save({
         ...user,
-        role_id: customerRole,
       });
       return newUser;
     } catch (error) {
