@@ -31,7 +31,6 @@ app.use(mainRouter);
 
 //* Error Handling Middleware
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  console.log(err);
   if (err instanceof ApplicationError) {
     return Responses.generateErrorResponse(res, err.statusCode, {
       message: err.message,

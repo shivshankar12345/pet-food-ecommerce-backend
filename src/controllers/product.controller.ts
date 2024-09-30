@@ -1,14 +1,19 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { ProductService } from "../services/product.service";
 import { Product as ProductType } from "../types/product.types";
 import ApplicationError from "../error/ApplicationError";
 import { checkRequiredValidation } from "../modules/validation";
-import { uploadToCloudinary } from "../utils/cloudinary"; //using cloudnairy here
+import { uploadToCloudinary } from "../utils/cloudinary"; // Using Cloudinary here
 import { Category, PetType } from "../utils/enum";
+import Responses from "../modules/responses";
 
 const productService = new ProductService();
 
-export const createProduct = async (req: Request, res: Response) => {
+export const createProduct = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const {
       name,
@@ -33,50 +38,52 @@ export const createProduct = async (req: Request, res: Response) => {
     ]);
 
     if (!validationData.status) {
-      return res.status(400).json({ message: validationData.message });
+      throw new ApplicationError(400, "Validation is required");
     }
 
     if (!Object.values(Category).includes(categoryId)) {
-      return res.status(400).json({ message: "Invalid category" });
+      throw new ApplicationError(400, "Invalid category");
     }
     if (!Object.values(PetType).includes(petType)) {
-      return res.status(400).json({ message: "Invalid pet Types" });
+      throw new ApplicationError(400, "Invalid petType");
     }
 
-    const imageFile = req.file;
+    const imageFile = req.file; // This is the uploaded file
+    console.log("Uploaded file:", imageFile);
     if (!imageFile) {
-      return res.status(400).json({ message: "Image file is required." });
+      throw new ApplicationError(400, "Image file is required");
     }
 
     const CloudinaryResponse = await uploadToCloudinary(
-      imageFile.path,
+      imageFile,
       "products"
     );
     const imageUrl = CloudinaryResponse.secure_url;
-
     const productData: ProductType = {
       name,
       categoryId,
       price: parseFloat(price),
       description,
       stock: parseInt(stock, 10),
-      imageUrl,
+      imageUrl, // Use the URL obtained from Cloudinary
       brandId: parseInt(brandId, 10),
       sellerId: parseInt(sellerId, 10),
       petType,
     };
 
     const newProduct = await productService.createProduct(productData);
-    return res.status(201).json(newProduct);
+    return Responses.generateSuccessResponse(res, 201, { data: newProduct });
   } catch (error: any) {
-    if (error instanceof ApplicationError) {
-      return res.status(error.statusCode).json({ message: error.message });
-    }
-    return res.status(500).json({ message: "Internal Server Error" });
+    console.error("Error in createProduct:", error); // Log the error
+    next(error);
   }
 };
 
-export const getAllProducts = async (req: Request, res: Response) => {
+export const getAllProducts = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 5;
 
@@ -86,14 +93,19 @@ export const getAllProducts = async (req: Request, res: Response) => {
       limit
     );
 
-    if (products.length === 0) {
-      return res
-        .status(404)
-        .json({ success: false, message: "No products found" });
+    if (!products.length) {
+      return Responses.generateSuccessResponse(res, 200, {
+        data: [],
+        pagination: {
+          currentPage: page,
+          itemsPerPage: limit,
+          totalItems: total,
+          totalPages: 0,
+        },
+      });
     }
 
-    return res.status(200).json({
-      success: true,
+    return Responses.generateSuccessResponse(res, 200, {
       data: products,
       pagination: {
         currentPage: page,
@@ -103,54 +115,54 @@ export const getAllProducts = async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    if (error instanceof ApplicationError) {
-      return res
-        .status(error.statusCode)
-        .json({ success: false, message: error.message });
-    }
-    return res
-      .status(500)
-      .json({ success: false, message: "Internal Server Error" });
+    next(error);
   }
 };
 
-export const getProductById = async (req: Request, res: Response) => {
+export const getProductById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const id = req.query.id as string | null;
     if (!id) {
-      return res.status(400).json({ message: "Product ID is required." });
+      throw new ApplicationError(400, "Product ID is required");
     }
+
     const validationData = await checkRequiredValidation([
       { field: "Product ID", value: id, type: "Empty" },
     ]);
 
     if (!validationData.status) {
-      return res.status(400).json({ message: validationData.message });
+      throw new ApplicationError(400, validationData.message);
     }
 
     const product = await productService.getProductById(parseInt(id, 10));
 
     if (!product) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Product not found" });
+      return Responses.generateErrorResponse(res, 404, {
+        message: "Product not found",
+      });
     }
 
-    return res.status(200).json({ success: true, data: product });
-  } catch (error: any) {
-    if (error instanceof ApplicationError) {
-      return res.status(error.statusCode).json({ message: error.message });
-    }
-    return res.status(500).json({ message: "Internal Server Error" });
+    return Responses.generateSuccessResponse(res, 200, { data: product });
+  } catch (error) {
+    next(error);
   }
 };
 
-export const updateProduct = async (req: Request, res: Response) => {
+export const updateProduct = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const id = req.query.id as string | null;
 
+    // Validate Product ID
     if (!id) {
-      return res.status(400).json({ message: "Product ID is required." });
+      throw new ApplicationError(400, "Product ID is required");
     }
 
     const validationData = await checkRequiredValidation([
@@ -158,74 +170,74 @@ export const updateProduct = async (req: Request, res: Response) => {
     ]);
 
     if (!validationData.status) {
-      return res.status(400).json({ message: validationData.message });
+      throw new ApplicationError(400, validationData.message);
     }
 
+    // Get existing product
     const existingProduct = await productService.getProductById(
       parseInt(id, 10)
     );
-
     if (!existingProduct) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Product not found" });
+      throw new ApplicationError(404, "Product not found");
     }
-    if (
-      req.body.petType &&
-      !Object.values(PetType).includes(req.body.petType)
-    ) {
-      return res.status(400).json({ message: "Invalid Pet Type." });
+
+    // Validate petType and categoryId
+    const { petType, categoryId } = req.body;
+
+    if (petType && !Object.values(PetType).includes(petType)) {
+      throw new ApplicationError(400, "Invalid petType");
     }
-    if (
-      req.body.categoryId &&
-      !Object.values(Category).includes(req.body.categoryId)
-    ) {
-      return res.status(400).json({ message: "Invalid category" });
+
+    if (categoryId && !Object.values(Category).includes(categoryId)) {
+      throw new ApplicationError(400, "Invalid category");
     }
+
+    // Handle image upload if provided
     let imageUrl;
     if (req.file) {
       const CloudinaryResponse = await uploadToCloudinary(
-        req.file?.path,
+        req.file,
         "products"
       );
       imageUrl = CloudinaryResponse.secure_url;
     } else {
       imageUrl = existingProduct.imageUrl;
     }
+
     // Prepare product data for update
     const productData: Partial<ProductType> = {
       ...req.body,
       imageUrl,
-      id: existingProduct.id, // Keep the existing ID
-
-      createdAt: existingProduct.createdAt, // Retain existing createdAt
+      id: existingProduct.id,
+      createdAt: existingProduct.createdAt,
       updatedAt: new Date(),
     };
 
+    // Update product in the database
     const updatedProduct = await productService.updateProduct(
       existingProduct.id,
       productData
     );
 
-    return res.status(200).json({ success: true, data: updatedProduct });
-  } catch (error: any) {
-    if (error instanceof ApplicationError) {
-      return res
-        .status(error.statusCode)
-        .json({ success: false, message: error.message });
-    }
-    return res
-      .status(500)
-      .json({ success: false, message: "Internal Server Error" });
+    // Send success response
+    return Responses.generateSuccessResponse(res, 200, {
+      data: updatedProduct,
+    });
+  } catch (error) {
+    next(error);
   }
 };
 
-export const deleteProduct = async (req: Request, res: Response) => {
+export const deleteProduct = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const id = req.query.id as string | null;
 
     if (!id) {
-      return res.status(400).json({ message: "Product ID is required." });
+      throw new ApplicationError(400, "Product ID is required.");
     }
 
     const validationData = await checkRequiredValidation([
@@ -233,32 +245,22 @@ export const deleteProduct = async (req: Request, res: Response) => {
     ]);
 
     if (!validationData.status) {
-      return res.status(400).json({ message: validationData.message });
+      throw new ApplicationError(400, validationData.message);
     }
 
     const productId = parseInt(id, 10);
     const existingProduct = await productService.getProductById(productId);
 
     if (!existingProduct) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Product not found" });
+      throw new ApplicationError(404, "Product not found");
     }
 
-    // Perform soft delete by setting isDeleted to true
     await productService.deleteProduct(productId);
 
-    return res
-      .status(200)
-      .json({ success: true, message: "Product deleted successfully" });
-  } catch (error: any) {
-    if (error instanceof ApplicationError) {
-      return res
-        .status(error.statusCode)
-        .json({ success: false, message: error.message });
-    }
-    return res
-      .status(500)
-      .json({ success: false, message: "Internal Server Error" });
+    return Responses.generateSuccessResponse(res, 200, {
+      message: "Product deleted successfully",
+    });
+  } catch (error) {
+    next(error);
   }
 };
