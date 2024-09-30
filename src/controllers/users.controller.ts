@@ -17,6 +17,7 @@ const userService = new UserService();
 export default class UserController {
   async sendOtp(req: Request, res: Response, next: NextFunction) {
     try {
+      console.log("Inside");
       const { email } = req.body;
       if (!email) {
         throw new ApplicationError(400, "Email is Required !!");
@@ -46,7 +47,7 @@ export default class UserController {
       if (!id || !otp || !email) {
         throw new ApplicationError(400, "Enter Require fields");
       }
-      if (generatedOtp?.id !== id && generatedOtp?.email !== email) {
+      if (generatedOtp?.id !== id || generatedOtp?.email !== email) {
         throw new ApplicationError(400, "Please Generate Otp");
       }
       const currTime = new Date();
