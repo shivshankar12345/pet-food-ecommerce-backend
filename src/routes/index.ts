@@ -7,9 +7,10 @@ import validateAdmin from "./admin/admin.auth";
 
 const mainRouter = Router();
 
-mainRouter.use("/api/users", userRouter);
-
 mainRouter.use("/products", productroutes);
 
+mainRouter.use("/user", userRouter);
+
 mainRouter.use("/api/admin-panel", adminRouter);
+
 export default mainRouter;
