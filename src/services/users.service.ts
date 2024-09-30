@@ -3,8 +3,8 @@ import { User } from "../entity/user.entity";
 import ApplicationError from "../error/ApplicationError";
 import { SaveUserParams } from "../types/user.types";
 import { UpdateUser } from "../types/user.types";
-const userRepository = AppDataSource.getRepository(User);
 
+const userRepository = AppDataSource.getRepository(User);
 export default class UserService {
   async updateUser(user: UpdateUser) {
     try {
@@ -20,6 +20,7 @@ export default class UserService {
       });
       await userRepository.save(updatedUser);
       return updatedUser;
+      return updatedUser;
     } catch (error) {
       throw error;
     }
@@ -32,7 +33,9 @@ export default class UserService {
       if (existingUser) {
         return existingUser;
       }
-      const newUser = await userRepository.save(user);
+      const newUser = await userRepository.save({
+        ...user,
+      });
       return newUser;
     } catch (error) {
       throw error;

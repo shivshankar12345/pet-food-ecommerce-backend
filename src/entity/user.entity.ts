@@ -1,4 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToOne,
+  JoinColumn,
+} from "typeorm";
+import { Role } from "./role.entity";
 
 @Entity("User")
 export class User {
@@ -17,8 +24,8 @@ export class User {
   @Column({ type: "enum", enum: ["m", "f", "o"], default: null })
   gender: string;
 
-  @Column({ default: "customer" })
-  role_id: string;
+  @Column({ nullable: true, default: null })
+  role: string;
 
   @Column({ nullable: true })
   pan_num: string;
@@ -28,6 +35,18 @@ export class User {
 
   @Column({ nullable: true })
   gst_num: string;
+
+  @Column({ default: false })
+  is_verfied: boolean;
+
+  @Column({ default: true })
+  is_active: boolean;
+
+  @Column({ nullable: true })
+  token: string;
+
+  @Column({ default: null })
+  deleted_at: string;
 
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   created_at: string;
