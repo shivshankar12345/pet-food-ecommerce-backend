@@ -1,11 +1,9 @@
 import { NextFunction, Request, Response, Router } from "express";
 import UserController from "../controllers/users.controller";
-
 import jwtAuth from "../middlewares/jwtAuth";
 import validateRefreshToken from "../middlewares/auth";
 import AuthTokens from "../utils/tokens";
 import Responses from "../modules/responses";
-
 
 const userRouter = Router();
 const userController: UserController = new UserController();
