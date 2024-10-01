@@ -4,27 +4,26 @@ import { AppDataSource } from "../../db/data-source";
 import { Permission } from "../../entity/permission.entity";
 import Responses from "../../modules/responses";
 import { Role } from "../../entity/role.entity";
+import AdminUserManageController from "../../controllers/admin/admin.users.controller";
+import AdminSellerManageController from "../../controllers/admin/admin.seller.controller";
 
 const adminRouter = Router();
+const adminUserController = new AdminUserManageController();
+const adminSellerController = new AdminSellerManageController();
 
-adminRouter.get(
-  "/getUserDetails",
-  (req: Request, res: Response, next: NextFunction) => {}
-);
+adminRouter.get("/getActiveUsers", adminUserController.getActiveUsers);
 
-adminRouter.get(
-  "/getSellerDetails",
-  (req: Request, res: Response, next: NextFunction) => {}
-);
+adminRouter.get("/getInactiveUsers", adminUserController.getInActiveUsers);
 
-adminRouter.get(
-  "/getPendingSeller",
-  (req: Request, res: Response, next: NextFunction) => {}
-);
+adminRouter.patch("/modifyUser", adminUserController.modifyUser);
+
+adminRouter.get("/getVerifiedDetails", adminSellerController.getVerifiedSeller);
+
+adminRouter.get("/getPendingSeller", adminSellerController.getPendingSeller);
 
 adminRouter.patch(
   "/changeSellerStatus",
-  (req: Request, res: Response, next: NextFunction) => {}
+  adminSellerController.changeSellerStatus
 );
 
 adminRouter.post(
