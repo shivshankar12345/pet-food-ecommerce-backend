@@ -20,5 +20,15 @@ export default class AdminSellerManageController {
       next(error);
     }
   }
-  async changeSellerStatus(req: Request, res: Response, next: NextFunction) {}
+  async changeSellerStatus(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id, is_verified } = req.body;
+      await adminSellerService.updateSeller({ id, is_verified });
+      return Responses.generateSuccessResponse(res, 200, {
+        message: "Seller updated Successfully !!",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

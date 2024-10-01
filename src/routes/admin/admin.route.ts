@@ -17,12 +17,23 @@ adminRouter.get("/getInactiveUsers", adminUserController.getInActiveUsers);
 
 adminRouter.patch("/modifyUser", adminUserController.modifyUser);
 
-adminRouter.get("/getVerifiedDetails", adminSellerController.getVerifiedSeller);
+adminRouter.get("/getVerifiedSeller", adminSellerController.getVerifiedSeller);
 
 adminRouter.get("/getPendingSeller", adminSellerController.getPendingSeller);
 
 adminRouter.patch(
-  "/changeSellerStatus",
+  "/changeSellerStatus/approvedSeller",
+  (req, res, next) => {
+    req.body.is_verfied = true;
+  },
+  adminSellerController.changeSellerStatus
+);
+
+adminRouter.patch(
+  "/changeSellerStatus/rejectSeller",
+  (req, res, next) => {
+    req.body.is_verfied = false;
+  },
   adminSellerController.changeSellerStatus
 );
 

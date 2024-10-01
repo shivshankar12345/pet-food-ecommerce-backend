@@ -1,6 +1,7 @@
 import { Not } from "typeorm";
 import { AppDataSource } from "../../db/data-source";
 import { User } from "../../entity/user.entity";
+import ApplicationError from "../../error/ApplicationError";
 
 const userRepository = AppDataSource.getRepository(User);
 
@@ -28,6 +29,23 @@ export default class AdminSellerManageService {
       throw error;
     }
   }
-  approveSellerRequest() {}
-  rejectSellerRequest() {}
+
+  async updateSeller({
+    id,
+    is_verified,
+  }: {
+    id: string;
+    is_verified: boolean;
+  }) {
+    try {
+      const userExist = await userRepository.findOne({ where: { id } });
+      if (!userExist) {
+        throw new ApplicationError(404, "User not found");
+      }
+      userExist.is_verfied = is_verified;
+      await userRepository.save(userExist);
+    } catch (error) {
+      throw error;
+    }
+  }
 }
