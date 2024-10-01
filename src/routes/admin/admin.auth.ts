@@ -13,8 +13,7 @@ async function validateAdmin(req: Request, res: Response, next: NextFunction) {
     if (!user) {
       throw new ApplicationError(401, "UnAuthorized Access");
     }
-    console.log((user as any).roleId);
-    Responses.generateSuccessResponse(res, 200, { msg: "success" });
+    next();
   } catch (error) {
     next(error);
   }
