@@ -120,4 +120,24 @@ export default class UserController {
       next(error);
     }
   }
+
+  async createSellerReq(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { pan_num, gst_num } = req.body;
+      const { id } = req as any;
+      if (!pan_num || !gst_num) {
+        throw new ApplicationError(400, "Please Enter Required fields");
+      }
+      await userService.updateUser({ pan_num, gst_num, id });
+      Responses.generateSuccessResponse(res, 200, {
+        message: "Seller Request Created Successfully ",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

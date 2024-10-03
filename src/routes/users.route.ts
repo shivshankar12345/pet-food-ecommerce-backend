@@ -14,6 +14,11 @@ userRouter.post("/validateOtp", userController.validateOtp);
 
 userRouter.patch("/update", jwtAuth, userController.updateUser);
 
+userRouter.patch(
+  "/createSellerRequest",
+  jwtAuth,
+  userController.createSellerReq
+);
 userRouter.post(
   "/refreshToken",
   validateRefreshToken,

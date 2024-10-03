@@ -1,4 +1,4 @@
-import { Not } from "typeorm";
+import { IsNull, Not } from "typeorm";
 import { AppDataSource } from "../../db/data-source";
 import { User } from "../../entity/user.entity";
 import ApplicationError from "../../error/ApplicationError";
@@ -20,8 +20,8 @@ export default class AdminSellerManageService {
     try {
       const pendingSellers = await userRepository.find({
         where: [
-          { is_verfied: false, gst_num: Not(null as unknown as string) },
-          { is_verfied: false, pan_num: Not(null as unknown as string) },
+          { is_verfied: false, gst_num: Not(IsNull()) },
+          { is_verfied: false, pan_num: Not(IsNull()) },
         ],
       });
       return pendingSellers;
@@ -43,6 +43,10 @@ export default class AdminSellerManageService {
         throw new ApplicationError(404, "User not found");
       }
       userExist.is_verfied = is_verified;
+      if (!is_verified) {
+        userExist.gst_num = null as unknown as string;
+        userExist.pan_num = null as unknown as string;
+      }
       await userRepository.save(userExist);
     } catch (error) {
       throw error;
