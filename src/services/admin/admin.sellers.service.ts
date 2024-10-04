@@ -19,6 +19,7 @@ export default class AdminSellerManageService {
           "gst_num",
           "pan_num",
           "is_active",
+          "rating",
         ],
       });
       return activeSellers;

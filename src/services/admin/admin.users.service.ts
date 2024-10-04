@@ -5,13 +5,18 @@ import ApplicationError from "../../error/ApplicationError";
 const userRepository = AppDataSource.getRepository(User);
 
 export default class AdminUserManageService {
-  async getUsers(activationStatus: boolean) {
+  async getUsers(activationStatus: boolean, skip: number, take: number) {
     try {
+      console.log(skip, take);
       const users = await userRepository.find({
         where: { is_active: activationStatus },
         select: ["id", "name", "email", "phone", "is_active"],
+        skip,
+        take,
       });
-      return users;
+
+      const totalUsers = await userRepository.count();
+      return { users, totalUsers };
     } catch (error) {
       throw error;
     }
@@ -36,6 +41,17 @@ export default class AdminUserManageService {
         select: ["id", "name", "email", "phone", "is_active", "gender"],
       });
       return user;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteUser(id: string) {
+    try {
+      const deletedUser = await userRepository.delete({ id });
+      if ((deletedUser.affected as number) > 0) {
+        throw new ApplicationError(404, "User not found");
+      }
     } catch (error) {
       throw error;
     }

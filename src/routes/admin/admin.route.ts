@@ -17,6 +17,8 @@ adminRouter.get("/getUsers", adminUserController.getUsers);
 
 adminRouter.get("/getInactiveUsers", adminUserController.getInActiveUsers);
 
+adminRouter.delete("/deleteUser/:id", adminUserController.deleteUser);
+
 adminRouter.patch("/modifyUser", adminUserController.modifyUser);
 
 adminRouter.get("/getVerifiedSeller", adminSellerController.getVerifiedSeller);
