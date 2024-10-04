@@ -29,4 +29,15 @@ export default class AdminUserManageService {
       throw error;
     }
   }
+
+  async getAllUsers() {
+    try {
+      const user = await userRepository.find({
+        select: ["id", "name", "email", "phone", "is_active", "gender"],
+      });
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

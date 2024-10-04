@@ -13,6 +13,8 @@ const adminSellerController = new AdminSellerManageController();
 
 adminRouter.get("/getActiveUsers", adminUserController.getActiveUsers);
 
+adminRouter.get("/getUsers", adminUserController.getUsers);
+
 adminRouter.get("/getInactiveUsers", adminUserController.getInActiveUsers);
 
 adminRouter.patch("/modifyUser", adminUserController.modifyUser);
