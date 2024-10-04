@@ -20,7 +20,6 @@ export default class UserService {
       });
       await userRepository.save(updatedUser);
       return updatedUser;
-      return updatedUser;
     } catch (error) {
       throw error;
     }

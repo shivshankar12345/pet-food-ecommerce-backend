@@ -10,6 +10,16 @@ export default class AdminSellerManageService {
     try {
       const activeSellers = await userRepository.find({
         where: { is_verfied: true },
+        select: [
+          "id",
+          "name",
+          "email",
+          "phone",
+          "gender",
+          "gst_num",
+          "pan_num",
+          "is_active",
+        ],
       });
       return activeSellers;
     } catch (error) {
@@ -22,6 +32,16 @@ export default class AdminSellerManageService {
         where: [
           { is_verfied: false, gst_num: Not(IsNull()) },
           { is_verfied: false, pan_num: Not(IsNull()) },
+        ],
+        select: [
+          "id",
+          "name",
+          "email",
+          "phone",
+          "gender",
+          "gst_num",
+          "pan_num",
+          "is_active",
         ],
       });
       return pendingSellers;
@@ -42,10 +62,14 @@ export default class AdminSellerManageService {
       if (!userExist) {
         throw new ApplicationError(404, "User not found");
       }
+
+      if (!userExist.pan_num || !userExist.gst_num) {
+        throw new ApplicationError(400, "User need to Create Request first");
+      }
       userExist.is_verfied = is_verified;
       if (!is_verified) {
-        userExist.gst_num = null as unknown as string;
-        userExist.pan_num = null as unknown as string;
+        userExist.gst_num = null as any;
+        userExist.pan_num = null as any;
       }
       await userRepository.save(userExist);
     } catch (error) {

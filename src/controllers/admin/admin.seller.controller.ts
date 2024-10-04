@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import AdminSellerManageService from "../../services/admin/admin.sellers.service";
 import Responses from "../../modules/responses";
+import ApplicationError from "../../error/ApplicationError";
 
 const adminSellerService = new AdminSellerManageService();
 export default class AdminSellerManageController {
@@ -22,7 +23,10 @@ export default class AdminSellerManageController {
   }
   async changeSellerStatus(req: Request, res: Response, next: NextFunction) {
     try {
-      const { id, is_verified } = req.body;
+      const { id, is_verified = null } = req.body;
+      if (!id || is_verified == null) {
+        throw new ApplicationError(400, "Please Enter Required fields !!");
+      }
       await adminSellerService.updateSeller({ id, is_verified });
       return Responses.generateSuccessResponse(res, 200, {
         message: "Seller updated Successfully !!",
