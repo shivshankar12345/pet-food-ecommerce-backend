@@ -14,7 +14,7 @@ function jwtAuth(req: Request, res: Response, next: NextFunction): any {
     }
     const token = authToken.split(" ")[1];
     if (!token) {
-      throw new ApplicationError(400, "Invalid Token");
+      throw new ApplicationError(400, "Token not found");
     }
     const payload = AuthTokens.verifyAccessToken(token);
     (req as any).id = (payload as any).id;
