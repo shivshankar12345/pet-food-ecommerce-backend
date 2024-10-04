@@ -25,6 +25,7 @@ adminRouter.patch(
   "/changeSellerStatus/approvedSeller",
   (req, res, next) => {
     req.body.is_verfied = true;
+    next();
   },
   adminSellerController.changeSellerStatus
 );
@@ -33,6 +34,7 @@ adminRouter.patch(
   "/changeSellerStatus/rejectSeller",
   (req, res, next) => {
     req.body.is_verfied = false;
+    next();
   },
   adminSellerController.changeSellerStatus
 );
