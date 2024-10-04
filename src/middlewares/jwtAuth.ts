@@ -12,8 +12,8 @@ function jwtAuth(req: Request, res: Response, next: NextFunction): any {
     if (!authToken) {
       throw new ApplicationError(401, "UnAuthorized Access");
     }
-    const [bearer, token] = authToken.split(" ");
-    if (bearer != "Bearer") {
+    const token = authToken.split(" ")[1];
+    if (!token) {
       throw new ApplicationError(400, "Invalid Token");
     }
     const payload = AuthTokens.verifyAccessToken(token);
