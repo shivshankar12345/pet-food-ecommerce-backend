@@ -87,7 +87,8 @@ export default class UserController {
         pan_num = null,
         gst_num = null,
       } = req.body;
-      const data_to_update: UpdateUser = {};
+      const { id } = req as any;
+      const data_to_update: UpdateUser = { id };
       if (name) {
         data_to_update.name = name;
       }

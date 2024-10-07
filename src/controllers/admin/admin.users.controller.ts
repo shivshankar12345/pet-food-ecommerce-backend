@@ -36,7 +36,7 @@ export default class AdminUserManageController {
       return Responses.generateSuccessResponse(res, 200, {
         ...data,
         current_page: page_num || 1,
-        total_pages: data.total_users / limitOfDocs,
+        total_pages: Math.trunc(data.total_users / limitOfDocs) + 1,
       });
     } catch (error) {
       next(error);
@@ -57,7 +57,7 @@ export default class AdminUserManageController {
       return Responses.generateSuccessResponse(res, 200, {
         ...data,
         current_page: page_num || 1,
-        total_pages: data.total_users / limitOfDocs,
+        total_pages: Math.trunc(data.total_users / limitOfDocs) + 1,
       });
     } catch (error) {
       next(error);
@@ -77,19 +77,27 @@ export default class AdminUserManageController {
       return Responses.generateSuccessResponse(res, 200, {
         ...data,
         current_page: page_num || 1,
-        total_pages: data.total_users / limitOfDocs,
+        total_pages: Math.trunc(data.total_users / limitOfDocs) + 1,
       });
     } catch (error) {
       next(error);
     }
   }
 
-  async getUsers(req: Request, res: Response, next: NextFunction) {
-    try {
-      const data = await adminUserService.getAllUsers();
-      return Responses.generateSuccessResponse(res, 200, { users: data });
-    } catch (error) {
-      next(error);
-    }
-  }
+  // async getUsers(req: Request, res: Response, next: NextFunction) {
+  //   try {
+  //     let { limit, page_num } = req.query;
+  //     const limitOfDocs = limit ? parseInt(limit as string) : 10;
+  //     const skipElements =
+  //       (page_num ? parseInt(page_num as string) - 1 : 0) * limitOfDocs;
+
+  //     const data = await adminUserService.getAllUsers(
+  //       limitOfDocs,
+  //       skipElements
+  //     );
+  //     return Responses.generateSuccessResponse(res, 200, { users: data });
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // }
 }
