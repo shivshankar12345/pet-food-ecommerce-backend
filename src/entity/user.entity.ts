@@ -37,7 +37,7 @@ export class User {
   gst_num: string;
 
   @Column({ default: false })
-  is_verfied: boolean;
+  is_verified: boolean;
 
   @Column({ default: true })
   is_active: boolean;
