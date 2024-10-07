@@ -32,6 +32,7 @@ export default class AdminUserManageService {
     }
   }
 
+
   async getAllUsers(take: number, skip: number) {
     try {
       const user = await userRepository.find({
