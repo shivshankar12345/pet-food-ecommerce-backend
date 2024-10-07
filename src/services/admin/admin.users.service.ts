@@ -5,13 +5,15 @@ import ApplicationError from "../../error/ApplicationError";
 const userRepository = AppDataSource.getRepository(User);
 
 export default class AdminUserManageService {
-  async getUsers(activationStatus: boolean) {
+  async getUsers(activationStatus: boolean, take: number, skip: number) {
     try {
       const users = await userRepository.find({
         where: { is_active: activationStatus },
         select: ["id", "name", "email", "phone", "is_active"],
       });
-      return users;
+
+      const total_users = await userRepository.count();
+      return { users, total_users };
     } catch (error) {
       throw error;
     }
@@ -30,12 +32,15 @@ export default class AdminUserManageService {
     }
   }
 
-  async getAllUsers() {
+  async getAllUsers(take: number, skip: number) {
     try {
       const user = await userRepository.find({
         select: ["id", "name", "email", "phone", "is_active", "gender"],
+        skip,
+        take,
       });
-      return user;
+      const total_users = await userRepository.count();
+      return { user, total_users };
     } catch (error) {
       throw error;
     }

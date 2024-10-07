@@ -24,8 +24,20 @@ export default class AdminUserManageController {
 
   async getActiveUsers(req: Request, res: Response, next: NextFunction) {
     try {
-      const data = await adminUserService.getUsers(true);
-      return Responses.generateSuccessResponse(res, 200, { users: data });
+      let { limit, page_num } = req.query;
+      const limitOfDocs = limit ? parseInt(limit as string) : 10;
+      const skipElements =
+        (page_num ? parseInt(page_num as string) - 1 : 0) * limitOfDocs;
+      const data = await adminUserService.getUsers(
+        true,
+        limitOfDocs,
+        skipElements
+      );
+      return Responses.generateSuccessResponse(res, 200, {
+        ...data,
+        current_page: page_num || 1,
+        total_pages: data.total_users / limitOfDocs,
+      });
     } catch (error) {
       next(error);
     }
@@ -33,17 +45,40 @@ export default class AdminUserManageController {
 
   async getInActiveUsers(req: Request, res: Response, next: NextFunction) {
     try {
-      const data = await adminUserService.getUsers(false);
-      return Responses.generateSuccessResponse(res, 200, { users: data });
+      let { limit, page_num } = req.query;
+      const limitOfDocs = limit ? parseInt(limit as string) : 10;
+      const skipElements =
+        (page_num ? parseInt(page_num as string) - 1 : 0) * limitOfDocs;
+      const data = await adminUserService.getUsers(
+        false,
+        limitOfDocs,
+        skipElements
+      );
+      return Responses.generateSuccessResponse(res, 200, {
+        ...data,
+        current_page: page_num || 1,
+        total_pages: data.total_users / limitOfDocs,
+      });
     } catch (error) {
       next(error);
     }
   }
 
-  async getUsers(req: Request, res: Response, next: NextFunction) {
+  async getAllUsers(req: Request, res: Response, next: NextFunction) {
     try {
-      const data = await adminUserService.getAllUsers();
-      return Responses.generateSuccessResponse(res, 200, { users: data });
+      let { limit, page_num } = req.query;
+      const limitOfDocs = limit ? parseInt(limit as string) : 10;
+      const skipElements =
+        (page_num ? parseInt(page_num as string) - 1 : 0) * limitOfDocs;
+      const data = await adminUserService.getAllUsers(
+        limitOfDocs,
+        skipElements
+      );
+      return Responses.generateSuccessResponse(res, 200, {
+        ...data,
+        current_page: page_num || 1,
+        total_pages: data.total_users / limitOfDocs,
+      });
     } catch (error) {
       next(error);
     }

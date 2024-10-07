@@ -7,16 +7,38 @@ const adminSellerService = new AdminSellerManageService();
 export default class AdminSellerManageController {
   async getVerifiedSeller(req: Request, res: Response, next: NextFunction) {
     try {
-      const seller = await adminSellerService.getActive();
-      return Responses.generateSuccessResponse(res, 200, { seller });
+      let { limit, page_num } = req.query;
+      const limitOfDocs = limit ? parseInt(limit as string) : 10;
+      const skipElements =
+        (page_num ? parseInt(page_num as string) - 1 : 0) * limitOfDocs;
+      const verifiedSellers = await adminSellerService.getActive(
+        skipElements,
+        limitOfDocs
+      );
+      return Responses.generateSuccessResponse(res, 200, {
+        ...verifiedSellers,
+        total_pages: verifiedSellers.total_active_sellers / limitOfDocs,
+        current_page: page_num || 1,
+      });
     } catch (error) {
       next(error);
     }
   }
   async getPendingSeller(req: Request, res: Response, next: NextFunction) {
     try {
-      const pendingSeller = await adminSellerService.getPending();
-      return Responses.generateSuccessResponse(res, 200, { pendingSeller });
+      let { limit, page_num } = req.query;
+      const limitOfDocs = limit ? parseInt(limit as string) : 10;
+      const skipElements =
+        (page_num ? parseInt(page_num as string) - 1 : 0) * limitOfDocs;
+      const pendingSeller = await adminSellerService.getPending(
+        skipElements,
+        limitOfDocs
+      );
+      return Responses.generateSuccessResponse(res, 200, {
+        ...pendingSeller,
+        total_pages: pendingSeller.total_pending_sellers / limitOfDocs,
+        current_page: page_num || 1,
+      });
     } catch (error) {
       next(error);
     }

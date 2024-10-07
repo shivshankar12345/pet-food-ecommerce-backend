@@ -6,10 +6,10 @@ import ApplicationError from "../../error/ApplicationError";
 const userRepository = AppDataSource.getRepository(User);
 
 export default class AdminSellerManageService {
-  async getActive() {
+  async getActive(skip: number, take: number) {
     try {
-      const activeSellers = await userRepository.find({
-        where: { is_verfied: true },
+      const active_sellers = await userRepository.find({
+        where: { is_verified: true },
         select: [
           "id",
           "name",
@@ -20,18 +20,23 @@ export default class AdminSellerManageService {
           "pan_num",
           "is_active",
         ],
+        skip,
+        take,
       });
-      return activeSellers;
+      const total_active_sellers = await userRepository.count({
+        where: { is_verified: true },
+      });
+      return { active_sellers, total_active_sellers };
     } catch (error) {
       throw error;
     }
   }
-  async getPending() {
+  async getPending(skip: number, take: number) {
     try {
-      const pendingSellers = await userRepository.find({
+      const pending_sellers = await userRepository.find({
         where: [
-          { is_verfied: false, gst_num: Not(IsNull()) },
-          { is_verfied: false, pan_num: Not(IsNull()) },
+          { is_verified: false, gst_num: Not(IsNull()) },
+          { is_verified: false, pan_num: Not(IsNull()) },
         ],
         select: [
           "id",
@@ -43,8 +48,13 @@ export default class AdminSellerManageService {
           "pan_num",
           "is_active",
         ],
+        skip,
+        take,
       });
-      return pendingSellers;
+      const total_pending_sellers = await userRepository.count({
+        where: { is_verified: true },
+      });
+      return { pending_sellers, total_pending_sellers };
     } catch (error) {
       throw error;
     }
@@ -66,7 +76,7 @@ export default class AdminSellerManageService {
       if (!userExist.pan_num || !userExist.gst_num) {
         throw new ApplicationError(400, "User need to Create Request first");
       }
-      userExist.is_verfied = is_verified;
+      userExist.is_verified = is_verified;
       if (!is_verified) {
         userExist.gst_num = null as any;
         userExist.pan_num = null as any;
