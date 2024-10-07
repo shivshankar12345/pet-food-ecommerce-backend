@@ -52,7 +52,10 @@ export default class AdminSellerManageService {
         take,
       });
       const total_pending_sellers = await userRepository.count({
-        where: { is_verified: true },
+        where: [
+          { is_verified: false, gst_num: Not(IsNull()) },
+          { is_verified: false, pan_num: Not(IsNull()) },
+        ],
       });
       return { pending_sellers, total_pending_sellers };
     } catch (error) {

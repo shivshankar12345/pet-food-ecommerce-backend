@@ -17,7 +17,8 @@ export default class AdminSellerManageController {
       );
       return Responses.generateSuccessResponse(res, 200, {
         ...verifiedSellers,
-        total_pages: verifiedSellers.total_active_sellers / limitOfDocs,
+        total_pages:
+          Math.trunc(verifiedSellers.total_active_sellers / limitOfDocs) + 1,
         current_page: page_num || 1,
       });
     } catch (error) {
@@ -36,7 +37,8 @@ export default class AdminSellerManageController {
       );
       return Responses.generateSuccessResponse(res, 200, {
         ...pendingSeller,
-        total_pages: pendingSeller.total_pending_sellers / limitOfDocs,
+        total_pages:
+          Math.trunc(pendingSeller.total_pending_sellers / limitOfDocs) + 1,
         current_page: page_num || 1,
       });
     } catch (error) {

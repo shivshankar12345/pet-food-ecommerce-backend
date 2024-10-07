@@ -11,6 +11,7 @@ export default class UserService {
       const updatedUser = await userRepository.findOne({
         where: { id: user.id },
       });
+      console.log(updatedUser);
       if (!updatedUser) {
         throw new ApplicationError(404, "User not found !");
       }

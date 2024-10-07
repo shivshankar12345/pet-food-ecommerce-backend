@@ -10,9 +10,12 @@ export default class AdminUserManageService {
       const users = await userRepository.find({
         where: { is_active: activationStatus },
         select: ["id", "name", "email", "phone", "is_active"],
+        skip,
+        take,
       });
-
-      const total_users = await userRepository.count();
+      const total_users = await userRepository.count({
+        where: { is_active: activationStatus },
+      });
       return { users, total_users };
     } catch (error) {
       throw error;
