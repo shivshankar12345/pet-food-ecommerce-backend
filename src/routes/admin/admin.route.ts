@@ -6,6 +6,7 @@ import Responses from "../../modules/responses";
 import { Role } from "../../entity/role.entity";
 import AdminUserManageController from "../../controllers/admin/admin.users.controller";
 import AdminSellerManageController from "../../controllers/admin/admin.seller.controller";
+import { permission } from "process";
 
 const adminRouter = Router();
 const adminUserController = new AdminUserManageController();
@@ -72,6 +73,32 @@ adminRouter.post(
   }
 );
 
+adminRouter.get(
+  "/getRoles",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const roleRepository = AppDataSource.getRepository(Role);
+    const roles = await roleRepository
+      .createQueryBuilder("role")
+      .innerJoinAndSelect("role.permission", "permission")
+      .getMany();
+
+    // console.log({
+    //   permission: data?.permission.permission,
+    //   id: data?.id,
+    //   role: data?.role_name,
+    // });
+    // // console.log(data?.id);
+    // // console.log(data?.role_name);
+    // const roles = await roleRepository.find();
+    return Responses.generateSuccessResponse(res, 200, {
+      roles: roles.map(({ id, permission, role_name }) => ({
+        id,
+        permission: permission.permission,
+        role_name,
+      })),
+    });
+  }
+);
 adminRouter.post(
   "/createPermission",
   async (req: Request, res: Response, next: NextFunction) => {
