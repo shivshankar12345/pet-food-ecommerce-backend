@@ -6,9 +6,9 @@ import ApplicationError from "../../error/ApplicationError";
 const userRepository = AppDataSource.getRepository(User);
 
 export default class AdminSellerManageService {
-  async getActive(skip: number, take: number) {
+  async getVerified(skip: number, take: number, search: string) {
     try {
-      const active_sellers = await userRepository.find({
+      const verified_sellers = await userRepository.find({
         where: { is_verified: true },
         select: [
           "id",
@@ -23,15 +23,15 @@ export default class AdminSellerManageService {
         skip,
         take,
       });
-      const total_active_sellers = await userRepository.count({
+      const total_verified_sellers = await userRepository.count({
         where: { is_verified: true },
       });
-      return { active_sellers, total_active_sellers };
+      return { verified_sellers, total_verified_sellers };
     } catch (error) {
       throw error;
     }
   }
-  async getPending(skip: number, take: number) {
+  async getPending(skip: number, take: number, search: string) {
     try {
       const pending_sellers = await userRepository.find({
         where: [
@@ -46,7 +46,7 @@ export default class AdminSellerManageService {
           "gender",
           "gst_num",
           "pan_num",
-          "is_active",
+          "is_verified",
         ],
         skip,
         take,
