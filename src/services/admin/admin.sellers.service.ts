@@ -46,7 +46,7 @@ export default class AdminSellerManageService {
           "gender",
           "gst_num",
           "pan_num",
-          "is_verified",
+          "is_active",
         ],
         skip,
         take,
