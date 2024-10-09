@@ -2,8 +2,10 @@ import { IsNull, Not } from "typeorm";
 import { AppDataSource } from "../../db/data-source";
 import { User } from "../../entity/user.entity";
 import ApplicationError from "../../error/ApplicationError";
+import { Role } from "../../entity/role.entity";
 
 const userRepository = AppDataSource.getRepository(User);
+const roleRepository = AppDataSource.getRepository(Role);
 
 export default class AdminSellerManageService {
   async getVerified(skip: number, take: number, search: string) {
@@ -83,6 +85,14 @@ export default class AdminSellerManageService {
       if (!is_verified) {
         userExist.gst_num = null as any;
         userExist.pan_num = null as any;
+      } else {
+        const role = await roleRepository.findOne({
+          where: { role_name: "seller" },
+        });
+        if (!role) {
+          throw new ApplicationError(500, "Something went wrong ");
+        }
+        userExist.role = role as Role;
       }
       await userRepository.save(userExist);
     } catch (error) {
