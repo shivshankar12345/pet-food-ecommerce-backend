@@ -35,10 +35,10 @@ export default class AdminUserManageController {
         search as string
       );
       const total_pages =
-        Math.trunc(data.total_users / limitOfDocs) ==
+        (Math.trunc(data.total_users / limitOfDocs) ==
         data.total_users / limitOfDocs
           ? data.total_users / limitOfDocs
-          : Math.trunc(data.total_users / limitOfDocs) + 1;
+          : Math.trunc(data.total_users / limitOfDocs) + 1) || 1;
 
       return Responses.generateSuccessResponse(res, 200, {
         ...data,
@@ -63,10 +63,10 @@ export default class AdminUserManageController {
         search as string
       );
       const total_pages =
-        Math.trunc(data.total_users / limitOfDocs) ==
+        (Math.trunc(data.total_users / limitOfDocs) ==
         data.total_users / limitOfDocs
           ? data.total_users / limitOfDocs
-          : Math.trunc(data.total_users / limitOfDocs) + 1;
+          : Math.trunc(data.total_users / limitOfDocs) + 1) || 1;
       return Responses.generateSuccessResponse(res, 200, {
         ...data,
         current_page: page_num ? parseInt(page_num as string) : 1,
