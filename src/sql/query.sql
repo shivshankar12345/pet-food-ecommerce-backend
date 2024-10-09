@@ -11,3 +11,5 @@ INSERT into user(id, name, email, phone, gender, pan_num,gst_num, is_active, is_
   (uuid() ,"Sahil Hussain","sahilhussain395@gmail.com","7742048486","m",null, null, true, false),
   (uuid(), "Zabir Khan","zabirkhan69142@gmail.com","8003326507","m","BIIPH7812M","0fdhriuerebAfdb",true,false),
   (uuid(),"Raghav Soni","raghavsoni361@gmail.com","6367679561","m",null,null, false, false)
+
+INSERT into Permission (id, permission) Values(uuid(), "full"),(uuid(), "limited"),(uuid(), "moderate");

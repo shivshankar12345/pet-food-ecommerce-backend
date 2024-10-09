@@ -2,8 +2,8 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  OneToOne,
   JoinColumn,
+  ManyToOne,
 } from "typeorm";
 import { Role } from "./role.entity";
 
@@ -24,8 +24,9 @@ export class User {
   @Column({ type: "enum", enum: ["m", "f", "o"], default: null })
   gender: string;
 
-  @Column({ nullable: true, default: null })
-  role: string;
+  @ManyToOne(() => Role)
+  @JoinColumn({ name: "role_id" })
+  role: Role;
 
   @Column({ nullable: true })
   pan_num: string;
@@ -45,7 +46,7 @@ export class User {
   @Column({ nullable: true })
   token: string;
 
-  @Column({ default: null })
+  @Column({ type: "timestamp", default: null })
   deleted_at: string;
 
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })

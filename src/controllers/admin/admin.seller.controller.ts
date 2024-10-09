@@ -18,11 +18,11 @@ export default class AdminSellerManageController {
       );
 
       const total_pages =
-        Math.trunc(verifiedSellers.total_verified_sellers / limitOfDocs) ==
+        (Math.trunc(verifiedSellers.total_verified_sellers / limitOfDocs) ==
         verifiedSellers.total_verified_sellers / limitOfDocs
           ? verifiedSellers.total_verified_sellers / limitOfDocs
           : Math.trunc(verifiedSellers.total_verified_sellers / limitOfDocs) +
-            1;
+            1) || 1;
       return Responses.generateSuccessResponse(res, 200, {
         ...verifiedSellers,
         total_pages,
@@ -46,10 +46,11 @@ export default class AdminSellerManageController {
       );
 
       const total_pages =
-        Math.trunc(pendingSeller.total_pending_sellers / limitOfDocs) ==
+        (Math.trunc(pendingSeller.total_pending_sellers / limitOfDocs) ==
         pendingSeller.total_pending_sellers / limitOfDocs
           ? pendingSeller.total_pending_sellers / limitOfDocs
-          : Math.trunc(pendingSeller.total_pending_sellers / limitOfDocs) + 1;
+          : Math.trunc(pendingSeller.total_pending_sellers / limitOfDocs) +
+            1) || 1;
 
       return Responses.generateSuccessResponse(res, 200, {
         ...pendingSeller,
