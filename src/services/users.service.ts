@@ -30,6 +30,9 @@ export default class UserService {
     try {
       const existingUser = await userRepository.findOne({
         where: { email: user.email },
+        relations: {
+          role: true,
+        },
       });
       if (existingUser) {
         return existingUser;

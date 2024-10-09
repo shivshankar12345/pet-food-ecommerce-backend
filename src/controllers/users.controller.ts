@@ -72,6 +72,7 @@ export default class UserController {
         accessToken,
         refreshToken,
         auth: true,
+        role: user.role.role_name,
       });
     } catch (error) {
       next(error);
