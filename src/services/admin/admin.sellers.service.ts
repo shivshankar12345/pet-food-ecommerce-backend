@@ -6,7 +6,7 @@ import ApplicationError from "../../error/ApplicationError";
 const userRepository = AppDataSource.getRepository(User);
 
 export default class AdminSellerManageService {
-  async getActive(skip: number, take: number) {
+  async getActive(skip: number, take: number, p0: { name?: any; isActive: boolean; }) {
     try {
       const active_sellers = await userRepository.find({
         where: { is_verified: true },

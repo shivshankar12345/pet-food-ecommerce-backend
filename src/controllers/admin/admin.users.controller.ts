@@ -84,12 +84,12 @@ export default class AdminUserManageController {
     }
   }
 
-  async getUsers(req: Request, res: Response, next: NextFunction) {
-    try {
-      const data = await adminUserService.getAllUsers();
-      return Responses.generateSuccessResponse(res, 200, { users: data });
-    } catch (error) {
-      next(error);
-    }
-  }
+  // async getUsers(req: Request, res: Response, next: NextFunction) {
+  //   try {
+  //     const data = await adminUserService.getAllUsers();
+  //     return Responses.generateSuccessResponse(res, 200, { users: data });
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // }
 }

@@ -54,10 +54,7 @@ export const createProduct = async (
       throw new ApplicationError(400, "Image file is required");
     }
 
-    const CloudinaryResponse = await uploadToCloudinary(
-      imageFile,
-      "products"
-    );
+    const CloudinaryResponse = await uploadToCloudinary(imageFile, "products");
     const imageUrl = CloudinaryResponse.secure_url;
     const productData: ProductType = {
       name,
@@ -85,16 +82,18 @@ export const getAllProducts = async (
   next: NextFunction
 ) => {
   const page = parseInt(req.query.page as string) || 1;
-  const limit = parseInt(req.query.limit as string) || 5;
+  let limit = parseInt(req.query.limit as string) || 5;
+  const search = (req.query.search as string)?.trim() || "";
 
   try {
     const { products, total } = await productService.getAllProducts(
       page,
-      limit
+      limit,
+      search
     );
 
     if (!products.length) {
-      return Responses.generateSuccessResponse(res, 200, {
+      return Responses.generateSuccessResponse(res, 204, {
         data: [],
         pagination: {
           currentPage: page,
@@ -195,10 +194,7 @@ export const updateProduct = async (
     // Handle image upload if provided
     let imageUrl;
     if (req.file) {
-      const CloudinaryResponse = await uploadToCloudinary(
-        req.file,
-        "products"
-      );
+      const CloudinaryResponse = await uploadToCloudinary(req.file, "products");
       imageUrl = CloudinaryResponse.secure_url;
     } else {
       imageUrl = existingProduct.imageUrl;

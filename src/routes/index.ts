@@ -6,7 +6,7 @@ import validateAdmin from "./admin/admin.auth";
 
 const mainRouter = Router();
 
-mainRouter.use("/products", productroutes);
+mainRouter.use("/api/products", productroutes);
 
 mainRouter.use("/api/users", userRouter);
 

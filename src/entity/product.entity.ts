@@ -3,6 +3,9 @@ import { Category, PetType } from "../utils/enum";
 
 @Entity("Products")
 export class Product {
+  static findAndCountAll(query: { where: {}; limit: number; offset: number; }): { rows: any; count: any; } | PromiseLike<{ rows: any; count: any; }> {
+    throw new Error("Method not implemented.");
+  }
   @PrimaryGeneratedColumn()
   id: number;
 

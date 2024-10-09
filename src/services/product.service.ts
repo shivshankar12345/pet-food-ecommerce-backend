@@ -2,6 +2,7 @@ import { AppDataSource } from "../db/data-source";
 import { Product } from "../entity/product.entity";
 import { Product as ProductType } from "../types/product.types";
 import ApplicationError from "../error/ApplicationError";
+import { Like } from "typeorm";
 
 export class ProductService {
   private productRepository = AppDataSource.getRepository(Product);
@@ -17,13 +18,18 @@ export class ProductService {
 
   async getAllProducts(
     page: number,
-    limit: number
+    limit: number,
+    search: string = ""
   ): Promise<{ products: Product[]; total: number }> {
+    const offset = (page - 1) * limit;
     try {
       const [products, total] = await this.productRepository.findAndCount({
-        skip: (page - 1) * limit,
+        skip: offset,
         take: limit,
-        where: { isDeleted: false },
+        where: {
+          isDeleted: false,
+          ...(search && { name: Like(`%${search}%`) }),
+        },
       });
 
       return { products, total };
