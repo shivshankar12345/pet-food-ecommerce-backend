@@ -2,6 +2,7 @@ import { AppDataSource } from "../db/data-source";
 import { Product } from "../entity/product.entity";
 import { Product as ProductType } from "../types/product.types";
 import ApplicationError from "../error/ApplicationError";
+import { Like } from "typeorm";
 
 export class ProductService {
   private productRepository = AppDataSource.getRepository(Product);
@@ -17,13 +18,22 @@ export class ProductService {
 
   async getAllProducts(
     page: number,
-    limit: number
+    limit: number,
+    search: string = ""
   ): Promise<{ products: Product[]; total: number }> {
+    const offset = (page - 1) * limit;
+
     try {
+      // Query builder ka istemal karte hain
       const [products, total] = await this.productRepository.findAndCount({
-        skip: (page - 1) * limit,
+        skip: offset,
         take: limit,
-        where: { isDeleted: false },
+        where: {
+          isDeleted: false,
+          ...(search && {
+            name: Like(`%${search}%`), // Case-insensitive search
+          }),
+        },
       });
 
       return { products, total };
@@ -32,7 +42,7 @@ export class ProductService {
     }
   }
 
-  async getProductById(id: number): Promise<Product> {
+  async getProductById(id: number): Promise<Product> { // id is of type number
     try {
       const product = await this.productRepository.findOne({
         where: { id, isDeleted: false },
@@ -48,7 +58,7 @@ export class ProductService {
   }
 
   async updateProduct(
-    id: number,
+    id: number, // id is of type number
     productData: Partial<Product>
   ): Promise<Product> {
     try {
@@ -64,7 +74,7 @@ export class ProductService {
     }
   }
 
-  async deleteProduct(id: number): Promise<void> {
+  async deleteProduct(id: number): Promise<void> { // id is of type number
     try {
       const existingProduct = await this.getProductById(id);
 

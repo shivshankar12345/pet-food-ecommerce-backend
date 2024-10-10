@@ -41,5 +41,6 @@ export class Product {
 
   @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt: Date;
+  category: any;
  
 }

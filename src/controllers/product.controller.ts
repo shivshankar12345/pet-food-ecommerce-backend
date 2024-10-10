@@ -86,11 +86,13 @@ export const getAllProducts = async (
 ) => {
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 5;
+  const search = (req.query.search as string)?.trim() || "";
 
   try {
     const { products, total } = await productService.getAllProducts(
       page,
-      limit
+      limit,
+      search
     );
 
     if (!products.length) {
