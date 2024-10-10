@@ -1,12 +1,9 @@
-import { AppDataSource } from "../db/data-source";
-import { Role } from "../entity/role.entity";
-import { User } from "../entity/user.entity";
 import ApplicationError from "../error/ApplicationError";
 import { SaveUserParams } from "../types/user.types";
 import { UpdateUser } from "../types/user.types";
+import { userRepository } from "../repository/user.repository";
+import { roleRepository } from "../repository/role.repository";
 
-const userRepository = AppDataSource.getRepository(User);
-const roleRepository = AppDataSource.getRepository(Role);
 export default class UserService {
   async updateUser(user: UpdateUser) {
     try {
