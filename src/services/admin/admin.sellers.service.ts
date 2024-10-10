@@ -1,11 +1,8 @@
 import { IsNull, Like, Not } from "typeorm";
 import ApplicationError from "../../error/ApplicationError";
-import { User } from "../../entity/user.entity";
+import { userRepository } from "../../repository/user.repository";
+import { roleRepository } from "../../repository/role.repository";
 import { Role } from "../../entity/role.entity";
-import { AppDataSource } from "../../db/data-source";
-
-const userRepository = AppDataSource.getRepository(User);
-const roleRepository = AppDataSource.getRepository(Role);
 
 export default class AdminSellerManageService {
   async getVerified(skip: number, take: number, search: string) {
