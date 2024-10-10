@@ -1,6 +1,4 @@
-import { IsNull, Not } from "typeorm";
-import { AppDataSource } from "../../db/data-source";
-import { User } from "../../entity/user.entity";
+import { IsNull, Like, Not } from "typeorm";
 import ApplicationError from "../../error/ApplicationError";
 import { userRepository } from "../../repository/user.repository";
 import { roleRepository } from "../../repository/role.repository";
