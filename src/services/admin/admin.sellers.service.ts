@@ -1,8 +1,8 @@
-import { IsNull, Not } from "typeorm";
-import { AppDataSource } from "../../db/data-source";
-import { User } from "../../entity/user.entity";
+import { IsNull, Like, Not } from "typeorm";
 import ApplicationError from "../../error/ApplicationError";
+import { User } from "../../entity/user.entity";
 import { Role } from "../../entity/role.entity";
+import { AppDataSource } from "../../db/data-source";
 
 const userRepository = AppDataSource.getRepository(User);
 const roleRepository = AppDataSource.getRepository(Role);
@@ -11,7 +11,16 @@ export default class AdminSellerManageService {
   async getVerified(skip: number, take: number, search: string) {
     try {
       const verified_sellers = await userRepository.find({
-        where: { is_verified: true },
+        where: [
+          {
+            is_verified: true,
+            name: Like(`%${search}%`),
+          },
+          { is_verified: true, email: Like(`%${search}%`) },
+          { is_verified: true, phone: Like(`%${search}%`) },
+          { is_verified: true, pan_num: Like(`%${search}%`) },
+          { is_verified: true, gst_num: Like(`%${search}%`) },
+        ],
         select: [
           "id",
           "name",
@@ -26,7 +35,16 @@ export default class AdminSellerManageService {
         take,
       });
       const total_verified_sellers = await userRepository.count({
-        where: { is_verified: true },
+        where: [
+          {
+            is_verified: true,
+            name: Like(`%${search}%`),
+          },
+          { is_verified: true, email: Like(`%${search}%`) },
+          { is_verified: true, phone: Like(`%${search}%`) },
+          { is_verified: true, pan_num: Like(`%${search}%`) },
+          { is_verified: true, gst_num: Like(`%${search}%`) },
+        ],
       });
       return { verified_sellers, total_verified_sellers };
     } catch (error) {
@@ -37,9 +55,31 @@ export default class AdminSellerManageService {
     try {
       const pending_sellers = await userRepository.find({
         where: [
-          { is_verified: false, gst_num: Not(IsNull()) },
-          { is_verified: false, pan_num: Not(IsNull()) },
+          {
+            is_verified: false,
+            name: Like(`%${search}%`),
+            gst_num: Not(IsNull()),
+          },
+          {
+            is_verified: false,
+            email: Like(`%${search}%`),
+            gst_num: Not(IsNull()),
+          },
+          {
+            is_verified: false,
+            phone: Like(`%${search}%`),
+            gst_num: Not(IsNull()),
+          },
+          {
+            is_verified: false,
+            pan_num: Not(IsNull()) && Like(`%${search}%`),
+          },
+          {
+            is_verified: false,
+            gst_num: Not(IsNull()) && Like(`%${search}%`),
+          },
         ],
+
         select: [
           "id",
           "name",
@@ -55,8 +95,29 @@ export default class AdminSellerManageService {
       });
       const total_pending_sellers = await userRepository.count({
         where: [
-          { is_verified: false, gst_num: Not(IsNull()) },
-          { is_verified: false, pan_num: Not(IsNull()) },
+          {
+            is_verified: false,
+            name: Like(`%${search}%`),
+            gst_num: Not(IsNull()),
+          },
+          {
+            is_verified: false,
+            email: Like(`%${search}%`),
+            gst_num: Not(IsNull()),
+          },
+          {
+            is_verified: false,
+            phone: Like(`%${search}%`),
+            gst_num: Not(IsNull()),
+          },
+          {
+            is_verified: false,
+            pan_num: Not(IsNull()) && Like(`%${search}%`),
+          },
+          {
+            is_verified: false,
+            gst_num: Not(IsNull()) && Like(`%${search}%`),
+          },
         ],
       });
       return { pending_sellers, total_pending_sellers };

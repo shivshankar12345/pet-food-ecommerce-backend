@@ -1,5 +1,6 @@
 import { User } from "../../entity/user.entity";
 import { AppDataSource } from "../../db/data-source";
+import { Like } from "typeorm";
 import ApplicationError from "../../error/ApplicationError";
 
 const userRepository = AppDataSource.getRepository(User);
@@ -12,22 +13,24 @@ export default class AdminUserManageService {
     search: string
   ) {
     try {
-      const users = (
-        await userRepository.find({
-          where: { is_active: activationStatus },
-          select: ["id", "name", "email", "phone", "is_active"],
-          skip,
-          take,
-        })
-      ).filter(
-        value =>
-          value.id.includes(search) ||
-          value.email.includes(search) ||
-          value.name.includes(search) ||
-          value.phone.includes(search)
-      );
+      const users = await userRepository.find({
+        where: [
+          { is_active: activationStatus, name: Like(`%${search}%`) },
+          { is_active: activationStatus, email: Like(`%${search}%`) },
+          { is_active: activationStatus, phone: Like(`%${search}%`) },
+          { is_active: activationStatus, id: Like(`%${search}%`) },
+        ],
+        select: ["id", "name", "email", "phone", "is_active"],
+        skip,
+        take,
+      });
       const total_users = await userRepository.count({
-        where: { is_active: activationStatus },
+        where: [
+          { is_active: activationStatus, name: Like(`%${search}%`) },
+          { is_active: activationStatus, email: Like(`%${search}%`) },
+          { is_active: activationStatus, phone: Like(`%${search}%`) },
+          { is_active: activationStatus, id: Like(`%${search}%`) },
+        ],
       });
       return { users, total_users };
     } catch (error) {
@@ -50,20 +53,25 @@ export default class AdminUserManageService {
 
   async getAllUsers(take: number, skip: number, search: string) {
     try {
-      const users = (
-        await userRepository.find({
-          select: ["id", "name", "email", "phone", "is_active", "gender"],
-          skip,
-          take,
-        })
-      ).filter(
-        value =>
-          value.id.includes(search) ||
-          value.email.includes(search) ||
-          value.name.includes(search) ||
-          value.phone.includes(search)
-      );
-      const total_users = await userRepository.count();
+      const users = await userRepository.find({
+        select: ["id", "name", "email", "phone", "is_active", "gender"],
+        skip,
+        take,
+        where: [
+          { id: Like(`%${search}%`) },
+          { email: Like(`%${search}%`) },
+          { name: Like(`%${search}%`) },
+          { phone: Like(`%${search}%`) },
+        ],
+      });
+      const total_users = await userRepository.count({
+        where: [
+          { id: Like(`%${search}%`) },
+          { email: Like(`%${search}%`) },
+          { name: Like(`%${search}%`) },
+          { phone: Like(`%${search}%`) },
+        ],
+      });
       return { users, total_users };
     } catch (error) {
       throw error;
