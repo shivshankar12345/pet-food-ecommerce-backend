@@ -1,8 +1,5 @@
-import { User } from "../../entity/user.entity";
-import { AppDataSource } from "../../db/data-source";
 import ApplicationError from "../../error/ApplicationError";
-
-const userRepository = AppDataSource.getRepository(User);
+import { userRepository } from "../../repository/user.repository";
 
 export default class AdminUserManageService {
   async getUsers(

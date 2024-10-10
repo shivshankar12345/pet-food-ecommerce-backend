@@ -2,8 +2,13 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import ApplicationError from "../error/ApplicationError";
 import AuthTokens from "../utils/tokens";
+import Responses from "../modules/responses";
 
-function jwtAuth(req: Request, res: Response, next: NextFunction): any {
+function jwtAuth(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Responses | void {
   try {
     const authToken: string | null =
       (req.body as any)?.authToken ||
@@ -21,11 +26,21 @@ function jwtAuth(req: Request, res: Response, next: NextFunction): any {
     next();
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
-      return res
-        .status(403)
-        .json({ success: false, message: "Token Expired", tokenExpired: true });
+      return Responses.generateErrorResponse(res, 403, {
+        message: "Token Expired",
+        tokenExpired: true,
+      });
     }
-    res.status(401).json({ success: false, message: "UnAuthorizedAccess" });
+
+    if (error instanceof ApplicationError) {
+      return Responses.generateErrorResponse(res, error.statusCode, {
+        message: error.message,
+      });
+    }
+
+    Responses.generateErrorResponse(res, 401, {
+      message: "UnAuthorizedAccess",
+    });
   }
 }
 
