@@ -1,19 +1,24 @@
-import { Entity, PrimaryGeneratedColumn, Column,CreateDateColumn,UpdateDateColumn } from "typeorm";
-import { Category, PetType } from "../utils/enum";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+} from "typeorm";
+import { PetType } from "../utils/enum";
+import { Category } from "./category.entity";
 
 @Entity("Products")
 export class Product {
-  static findAndCountAll(query: { where: {}; limit: number; offset: number; }): { rows: any; count: any; } | PromiseLike<{ rows: any; count: any; }> {
-    throw new Error("Method not implemented.");
-  }
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
   @Column()
   name: string;
 
-  @Column({ type:"enum",enum:Category })
-  categoryId: Category;
+  @ManyToOne(() => Category, category => category.products)
+  category: Category;
 
   @Column({ type: "decimal", precision: 10, scale: 2 })
   price: number;
@@ -28,21 +33,20 @@ export class Product {
   imageUrl: string;
 
   @Column({ name: "brand_id", nullable: true })
-  brandId: number;
+  brand: string;
 
   @Column({ name: "seller_id" })
   sellerId: number;
 
   @Column({ type: "enum", enum: PetType, nullable: true })
   petType: PetType;
-  
+
   @Column({ default: false })
-  isDeleted: boolean; 
-  
+  isDeleted: boolean;
+
   @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt: Date;
 
   @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt: Date;
- 
 }

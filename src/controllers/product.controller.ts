@@ -4,8 +4,9 @@ import { Product as ProductType } from "../types/product.types";
 import ApplicationError from "../error/ApplicationError";
 import { checkRequiredValidation } from "../modules/validation";
 import { uploadToCloudinary } from "../utils/cloudinary"; // Using Cloudinary here
-import { Category, PetType } from "../utils/enum";
+import {  PetType } from "../utils/enum";
 import Responses from "../modules/responses";
+import { Category } from "../entity/category.entity";
 
 const productService = new ProductService();
 
@@ -17,22 +18,22 @@ export const createProduct = async (
   try {
     const {
       name,
-      categoryId,
+      category,
       price,
       description,
       stock,
-      brandId,
+      brand,
       sellerId,
       petType,
     } = req.body;
 
     const validationData: any = await checkRequiredValidation([
       { field: "Name", value: name, type: "Empty" },
-      { field: "Category ID", value: categoryId, type: "Empty" },
+      { field: "Category", value: category, type: "Empty" },
       { field: "Price", value: price, type: "Empty" },
       { field: "Description", value: description, type: "Empty" },
       { field: "Stock", value: stock, type: "Empty" },
-      { field: "Brand ID", value: brandId, type: "Empty" },
+      { field: "Brand", value: brand, type: "Empty" },
       { field: "Seller ID", value: sellerId, type: "Empty" },
       { field: "Pet Type", value: petType, type: "Empty" },
     ]);
@@ -41,7 +42,7 @@ export const createProduct = async (
       throw new ApplicationError(400, "Validation is required");
     }
 
-    if (!Object.values(Category).includes(categoryId)) {
+    if (!Object.values(Category).includes(category)) {
       throw new ApplicationError(400, "Invalid category");
     }
     if (!Object.values(PetType).includes(petType)) {
@@ -58,12 +59,12 @@ export const createProduct = async (
     const imageUrl = CloudinaryResponse.secure_url;
     const productData: ProductType = {
       name,
-      categoryId,
+      category,
       price: parseFloat(price),
       description,
       stock: parseInt(stock, 10),
       imageUrl, // Use the URL obtained from Cloudinary
-      brandId: parseInt(brandId, 10),
+      brand,
       sellerId: parseInt(sellerId, 10),
       petType,
     };
@@ -137,7 +138,7 @@ export const getProductById = async (
       throw new ApplicationError(400, validationData.message);
     }
 
-    const product = await productService.getProductById(parseInt(id, 10));
+    const product = await productService.getProductById(id);
 
     if (!product) {
       return Responses.generateErrorResponse(res, 404, {
@@ -174,20 +175,20 @@ export const updateProduct = async (
 
     // Get existing product
     const existingProduct = await productService.getProductById(
-      parseInt(id, 10)
+      id
     );
     if (!existingProduct) {
       throw new ApplicationError(404, "Product not found");
     }
 
     // Validate petType and categoryId
-    const { petType, categoryId } = req.body;
+    const { petType, category} = req.body;
 
     if (petType && !Object.values(PetType).includes(petType)) {
       throw new ApplicationError(400, "Invalid petType");
     }
 
-    if (categoryId && !Object.values(Category).includes(categoryId)) {
+    if (category && !Object.values(Category).includes(category)) {
       throw new ApplicationError(400, "Invalid category");
     }
 
@@ -244,7 +245,7 @@ export const deleteProduct = async (
       throw new ApplicationError(400, validationData.message);
     }
 
-    const productId = parseInt(id, 10);
+    const productId = id;
     const existingProduct = await productService.getProductById(productId);
 
     if (!existingProduct) {

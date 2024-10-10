@@ -38,7 +38,7 @@ export class ProductService {
     }
   }
 
-  async getProductById(id: number): Promise<Product> {
+  async getProductById(id: string): Promise<Product> {
     try {
       const product = await this.productRepository.findOne({
         where: { id, isDeleted: false },
@@ -54,7 +54,7 @@ export class ProductService {
   }
 
   async updateProduct(
-    id: number,
+    id: string,
     productData: Partial<Product>
   ): Promise<Product> {
     try {
@@ -70,7 +70,7 @@ export class ProductService {
     }
   }
 
-  async deleteProduct(id: number): Promise<void> {
+  async deleteProduct(id: string): Promise<void> {
     try {
       const existingProduct = await this.getProductById(id);
 
