@@ -30,7 +30,7 @@ adminRouter.get("/getPendingSeller", adminSellerController.getPendingSeller);
 adminRouter.patch(
   "/changeSellerStatus/approvedSeller",
   (req, res, next) => {
-    req.body.is_verfied = true;
+    req.body.is_verified = true;
     next();
   },
   adminSellerController.changeSellerStatus
@@ -39,7 +39,7 @@ adminRouter.patch(
 adminRouter.patch(
   "/changeSellerStatus/rejectSeller",
   (req, res, next) => {
-    req.body.is_verfied = false;
+    req.body.is_verified = false;
     next();
   },
   adminSellerController.changeSellerStatus
