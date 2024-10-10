@@ -35,7 +35,10 @@ export default class UserService {
         },
       });
       if (existingUser) {
-        return existingUser;
+        if (!existingUser.name || !existingUser.phone) {
+          return { user: existingUser, newUser: true };
+        }
+        return { user: existingUser, newUser: false };
       }
       const role = await roleRepository.findOne({
         where: { role_name: "customer" },
@@ -46,7 +49,7 @@ export default class UserService {
 
       const createUser = userRepository.create({ ...user, role });
       const newUser = await userRepository.save(createUser);
-      return newUser;
+      return { user: newUser, newUser: true };
     } catch (error) {
       throw error;
     }

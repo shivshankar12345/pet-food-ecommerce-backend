@@ -6,10 +6,14 @@ import Responses from "../../modules/responses";
 import { Role } from "../../entity/role.entity";
 import AdminUserManageController from "../../controllers/admin/admin.users.controller";
 import AdminSellerManageController from "../../controllers/admin/admin.seller.controller";
+import AdminRoleManageController from "../../controllers/admin/admin.role.controller";
+import AdminPermissionManageController from "../../controllers/admin/admin.permission.controller";
 
 const adminRouter = Router();
 const adminUserController = new AdminUserManageController();
 const adminSellerController = new AdminSellerManageController();
+const adminRoleController = new AdminRoleManageController();
+const adminPermissionController = new AdminPermissionManageController();
 
 adminRouter.get("/getActiveUsers", adminUserController.getActiveUsers);
 
@@ -41,95 +45,14 @@ adminRouter.patch(
   adminSellerController.changeSellerStatus
 );
 
-adminRouter.post(
-  "/createRole",
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { role_name, permission } = req.body;
-      if (!role_name || !permission) {
-        throw new ApplicationError(400, "Please Provide All fields");
-      }
+adminRouter.post("/createRole", adminRoleController.createRole);
 
-      const permissionRepository = AppDataSource.getRepository(Permission);
-      const roleRepository = AppDataSource.getRepository(Role);
-
-      const permissions = await permissionRepository.findOne({
-        where: { permission },
-      });
-      if (!permissions) {
-        throw new ApplicationError(400, "Invalid Permission");
-      }
-      await roleRepository.save({
-        role_name,
-        permission: permissions,
-      });
-      return Responses.generateSuccessResponse(res, 201, {
-        message: "Role Added",
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
-);
-
-adminRouter.get(
-  "/getRoles",
-  async (req: Request, res: Response, next: NextFunction) => {
-    const roleRepository = AppDataSource.getRepository(Role);
-    const roles = await roleRepository
-      .createQueryBuilder("role")
-      .innerJoinAndSelect("role.permission", "permission")
-      .select(["role.id", "permission.permission", "role.role_name"])
-      .getMany();
-    return Responses.generateSuccessResponse(res, 200, {
-      roles: roles.map(({ id, permission, role_name }) => ({
-        id,
-        role_name,
-        permission: permission.permission,
-      })),
-    });
-  }
-);
+adminRouter.get("/getRoles", adminRoleController.getRoles);
 
 adminRouter.post(
   "/createPermission",
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const permissionRepository = AppDataSource.getRepository(Permission);
-      const { permission } = req.body;
-      if (!permission) {
-        throw new ApplicationError(400, "Enter Permission name");
-      }
-      if (
-        permission != "limited" &&
-        permission != "moderate" &&
-        permission != "full"
-      ) {
-        throw new ApplicationError(400, "Invalid Permission");
-      }
-      await permissionRepository.save({ permission });
-      return Responses.generateSuccessResponse(res, 201, {
-        message: "Permission Added",
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
+  adminPermissionController.createPermission
 );
 
-adminRouter.get(
-  "/getPermissions",
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const permissionRepository = AppDataSource.getRepository(Permission);
-      const data = await permissionRepository.find();
-      return Responses.generateSuccessResponse(res, 200, {
-        success: true,
-        permissions: [...data],
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
-);
+adminRouter.get("/getPermissions", adminPermissionController.getPermissions);
 export default adminRouter;

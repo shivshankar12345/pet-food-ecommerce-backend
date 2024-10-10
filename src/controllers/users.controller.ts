@@ -60,7 +60,7 @@ export default class UserController {
         throw new ApplicationError(401, "Invalid OTP");
       }
 
-      const user = await userService.saveUser({
+      const { user, newUser } = await userService.saveUser({
         email: generatedOtp?.email as string,
       });
       const { accessToken, refreshToken } =
@@ -73,6 +73,7 @@ export default class UserController {
         refreshToken,
         auth: true,
         role: user.role.role_name,
+        newUser,
       });
     } catch (error) {
       next(error);
