@@ -22,13 +22,17 @@ export class ProductService {
     search: string = ""
   ): Promise<{ products: Product[]; total: number }> {
     const offset = (page - 1) * limit;
+
     try {
+      // Query builder ka istemal karte hain
       const [products, total] = await this.productRepository.findAndCount({
         skip: offset,
         take: limit,
         where: {
           isDeleted: false,
-          ...(search && { name: Like(`%${search}%`) }),
+          ...(search && {
+            name: Like(`%${search}%`), // Case-insensitive search
+          }),
         },
       });
 
@@ -38,7 +42,7 @@ export class ProductService {
     }
   }
 
-  async getProductById(id: string): Promise<Product> {
+  async getProductById(id: number): Promise<Product> { // id is of type number
     try {
       const product = await this.productRepository.findOne({
         where: { id, isDeleted: false },
@@ -54,7 +58,7 @@ export class ProductService {
   }
 
   async updateProduct(
-    id: string,
+    id: number, // id is of type number
     productData: Partial<Product>
   ): Promise<Product> {
     try {
@@ -70,7 +74,7 @@ export class ProductService {
     }
   }
 
-  async deleteProduct(id: string): Promise<void> {
+  async deleteProduct(id: number): Promise<void> { // id is of type number
     try {
       const existingProduct = await this.getProductById(id);
 
