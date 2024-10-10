@@ -10,6 +10,6 @@ mainRouter.use("/api/products", productroutes);
 
 mainRouter.use("/api/users", userRouter);
 
-mainRouter.use("/api/admin-panel", adminRouter);
+mainRouter.use("/api/admin-panel", validateAdmin, adminRouter);
 
 export default mainRouter;

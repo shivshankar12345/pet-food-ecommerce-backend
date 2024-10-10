@@ -20,6 +20,6 @@ export class Role {
   role_name: string;
 
   @OneToOne(() => Permission)
-  @JoinColumn()
+  @JoinColumn({ name: "permission_id" })
   permission: Permission;
 }

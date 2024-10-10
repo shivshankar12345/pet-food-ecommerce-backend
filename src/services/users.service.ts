@@ -1,10 +1,12 @@
 import { AppDataSource } from "../db/data-source";
+import { Role } from "../entity/role.entity";
 import { User } from "../entity/user.entity";
 import ApplicationError from "../error/ApplicationError";
 import { SaveUserParams } from "../types/user.types";
 import { UpdateUser } from "../types/user.types";
 
 const userRepository = AppDataSource.getRepository(User);
+const roleRepository = AppDataSource.getRepository(Role);
 export default class UserService {
   async updateUser(user: UpdateUser) {
     try {
@@ -28,13 +30,22 @@ export default class UserService {
     try {
       const existingUser = await userRepository.findOne({
         where: { email: user.email },
+        relations: {
+          role: true,
+        },
       });
       if (existingUser) {
         return existingUser;
       }
-      const newUser = await userRepository.save({
-        ...user,
+      const role = await roleRepository.findOne({
+        where: { role_name: "customer" },
       });
+      if (!role) {
+        throw new ApplicationError(500, "Something went wrong !!");
+      }
+
+      const createUser = userRepository.create({ ...user, role });
+      const newUser = await userRepository.save(createUser);
       return newUser;
     } catch (error) {
       throw error;

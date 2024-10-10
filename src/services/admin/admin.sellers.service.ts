@@ -2,13 +2,15 @@ import { IsNull, Not } from "typeorm";
 import { AppDataSource } from "../../db/data-source";
 import { User } from "../../entity/user.entity";
 import ApplicationError from "../../error/ApplicationError";
+import { Role } from "../../entity/role.entity";
 
 const userRepository = AppDataSource.getRepository(User);
+const roleRepository = AppDataSource.getRepository(Role);
 
 export default class AdminSellerManageService {
-  async getActive(skip: number, take: number, p0: { name?: any; isActive: boolean; }) {
+  async getVerified(skip: number, take: number, search: string) {
     try {
-      const active_sellers = await userRepository.find({
+      const verified_sellers = await userRepository.find({
         where: { is_verified: true },
         select: [
           "id",
@@ -23,15 +25,15 @@ export default class AdminSellerManageService {
         skip,
         take,
       });
-      const total_active_sellers = await userRepository.count({
+      const total_verified_sellers = await userRepository.count({
         where: { is_verified: true },
       });
-      return { active_sellers, total_active_sellers };
+      return { verified_sellers, total_verified_sellers };
     } catch (error) {
       throw error;
     }
   }
-  async getPending(skip: number, take: number) {
+  async getPending(skip: number, take: number, search: string) {
     try {
       const pending_sellers = await userRepository.find({
         where: [
@@ -52,7 +54,10 @@ export default class AdminSellerManageService {
         take,
       });
       const total_pending_sellers = await userRepository.count({
-        where: { is_verified: true },
+        where: [
+          { is_verified: false, gst_num: Not(IsNull()) },
+          { is_verified: false, pan_num: Not(IsNull()) },
+        ],
       });
       return { pending_sellers, total_pending_sellers };
     } catch (error) {
@@ -80,6 +85,14 @@ export default class AdminSellerManageService {
       if (!is_verified) {
         userExist.gst_num = null as any;
         userExist.pan_num = null as any;
+      } else {
+        const role = await roleRepository.findOne({
+          where: { role_name: "seller" },
+        });
+        if (!role) {
+          throw new ApplicationError(500, "Something went wrong ");
+        }
+        userExist.role = role as Role;
       }
       await userRepository.save(userExist);
     } catch (error) {

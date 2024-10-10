@@ -9,6 +9,7 @@ export class Permission {
     type: "enum",
     enum: ["limited", "moderate", "full"],
     enumName: "permission",
+    unique: true,
   })
   permission: string;
 }

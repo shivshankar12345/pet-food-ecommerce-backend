@@ -72,6 +72,25 @@ adminRouter.post(
   }
 );
 
+adminRouter.get(
+  "/getRoles",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const roleRepository = AppDataSource.getRepository(Role);
+    const roles = await roleRepository
+      .createQueryBuilder("role")
+      .innerJoinAndSelect("role.permission", "permission")
+      .select(["role.id", "permission.permission", "role.role_name"])
+      .getMany();
+    return Responses.generateSuccessResponse(res, 200, {
+      roles: roles.map(({ id, permission, role_name }) => ({
+        id,
+        role_name,
+        permission: permission.permission,
+      })),
+    });
+  }
+);
+
 adminRouter.post(
   "/createPermission",
   async (req: Request, res: Response, next: NextFunction) => {
