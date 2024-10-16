@@ -26,7 +26,7 @@ adminRouter.get("/getPendingSeller", adminSellerController.getPendingSeller);
 
 adminRouter.patch(
   "/changeSellerStatus/approvedSeller",
-  (req: Request, res: Response, next: NextFunction) => {
+  (req, res, next) => {
     req.body.is_verified = true;
     next();
   },
@@ -35,7 +35,7 @@ adminRouter.patch(
 
 adminRouter.patch(
   "/changeSellerStatus/rejectSeller",
-  (req: Request, res: Response, next: NextFunction) => {
+  (req, res, next) => {
     req.body.is_verified = false;
     next();
   },
