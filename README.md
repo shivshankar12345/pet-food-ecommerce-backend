@@ -14,7 +14,7 @@ i. netstat -ano | findstr :8000
 This Command Shows you the Currently Running process on PORT 8000, along with the Process Id which will be at the End of the row, This ProcessId helps us to kill the Process and Start our Server on PORT 8000
 For Kill the Existing Running Process on PORT 8000 Type following Command :
 
-ii. askkill /PID <ProcessID> /F
+ii. taskkill /PID <ProcessID> /F
 
 After this Please Restart the Server using :
 
