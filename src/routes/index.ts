@@ -15,7 +15,7 @@ mainRouter.use("/api/products", productroutes);
 mainRouter.use("/api/users", userRouter);
 mainRouter.use("/api/product-category",categoryRoutes);
 
-mainRouter.use("/api/admin-panel", jwtAuth, validateAdmin, adminRouter);
+mainRouter.use("/api/admin-panel", adminRouter);
 
 mainRouter.use("/api/seller-section", jwtAuth, validateSeller, sellerRouter);
 
