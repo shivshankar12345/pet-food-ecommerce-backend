@@ -4,6 +4,8 @@ import AdminSellerManageController from "../../controllers/admin/admin.seller.co
 import AdminRoleManageController from "../../controllers/admin/admin.role.controller";
 import AdminPermissionManageController from "../../controllers/admin/admin.permission.controller";
 import AdminContactManageController from "../../controllers/admin/admin.contact.controller";
+import AdminLandingPageManageController from "../../controllers/admin/admin.landingPage.controller";
+import { upload } from "../../middlewares/upload.middleware";
 
 const adminRouter = Router();
 const adminUserController = new AdminUserManageController();
@@ -11,6 +13,7 @@ const adminSellerController = new AdminSellerManageController();
 const adminRoleController = new AdminRoleManageController();
 const adminPermissionController = new AdminPermissionManageController();
 const adminContactController = new AdminContactManageController();
+const adminLandingPageController = new AdminLandingPageManageController();
 
 adminRouter.get("/getAllUsers", adminUserController.getAllUsers);
 
@@ -54,6 +57,17 @@ adminRouter.post(
 );
 
 adminRouter.get("/getPermissions", adminPermissionController.getPermissions);
+
+adminRouter.post(
+  "/landingpage/crousel/addImage",
+  upload.single("imageUrl"),
+  adminLandingPageController.addCrousel
+);
+
+adminRouter.get(
+  "/landingpage/crousel/getImages",
+  adminLandingPageController.getCrousel
+);
 
 adminRouter.post("/contact/addContact", adminContactController.addContact);
 
