@@ -15,7 +15,7 @@ export const AppDataSource = new DataSource({
   database: process.env.DATABASE || "",
   connectorPackage: "mysql2",
   entities: [Permission, Role, User, Token, Product,Category],
-  synchronize: false,
+  synchronize:false
 });
 
 export const connectToDb = async () => {

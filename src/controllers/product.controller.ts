@@ -48,16 +48,13 @@ export const createProduct = async (
       throw new ApplicationError(400, "Invalid petType");
     }
 
-    const imageFile = req.file; // This is the uploaded file
+    const imageFile = req.file;
     console.log("Uploaded file:", imageFile);
     if (!imageFile) {
       throw new ApplicationError(400, "Image file is required");
     }
 
-    const CloudinaryResponse = await uploadToCloudinary(
-      imageFile,
-      "products"
-    );
+    const CloudinaryResponse = await uploadToCloudinary(imageFile, "products");
     const imageUrl = CloudinaryResponse.secure_url;
     const productData: ProductType = {
       name,
@@ -66,8 +63,8 @@ export const createProduct = async (
       description,
       stock: parseInt(stock, 10),
       imageUrl, // Use the URL obtained from Cloudinary
-      brandId: parseInt(brandId, 10),
-      sellerId: parseInt(sellerId, 10),
+      brandId: brandId,
+      sellerId: sellerId,
       petType,
     };
 
@@ -140,7 +137,7 @@ export const getProductById = async (
       throw new ApplicationError(400, validationData.message);
     }
 
-    const product = await productService.getProductById(parseInt(id, 10));
+    const product = await productService.getProductById(id);
 
     if (!product) {
       return Responses.generateErrorResponse(res, 404, {
@@ -176,9 +173,7 @@ export const updateProduct = async (
     }
 
     // Get existing product
-    const existingProduct = await productService.getProductById(
-      parseInt(id, 10)
-    );
+    const existingProduct = await productService.getProductById(id);
     if (!existingProduct) {
       throw new ApplicationError(404, "Product not found");
     }
@@ -197,10 +192,7 @@ export const updateProduct = async (
     // Handle image upload if provided
     let imageUrl;
     if (req.file) {
-      const CloudinaryResponse = await uploadToCloudinary(
-        req.file,
-        "products"
-      );
+      const CloudinaryResponse = await uploadToCloudinary(req.file, "products");
       imageUrl = CloudinaryResponse.secure_url;
     } else {
       imageUrl = existingProduct.imageUrl;
@@ -250,14 +242,13 @@ export const deleteProduct = async (
       throw new ApplicationError(400, validationData.message);
     }
 
-    const productId = parseInt(id, 10);
-    const existingProduct = await productService.getProductById(productId);
+    const existingProduct = await productService.getProductById(id);
 
     if (!existingProduct) {
       throw new ApplicationError(404, "Product not found");
     }
 
-    await productService.deleteProduct(productId);
+    await productService.deleteProduct(id);
 
     return Responses.generateSuccessResponse(res, 200, {
       message: "Product deleted successfully",

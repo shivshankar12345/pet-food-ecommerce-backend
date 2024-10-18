@@ -3,5 +3,6 @@ export interface category{
     name:string,
     description:string,
     createdAt:Date,
-    updatedAt:Date
+    updatedAt:Date,
+    isDeleted:boolean
 }

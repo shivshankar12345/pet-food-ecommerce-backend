@@ -3,8 +3,8 @@ import { Category, PetType } from "../utils/enum";
 
 @Entity("Products")
 export class Product {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
   @Column()
   name: string;
@@ -25,10 +25,10 @@ export class Product {
   imageUrl: string;
 
   @Column({ name: "brand_id", nullable: true })
-  brandId: number;
+  brandId: string;
 
   @Column({ name: "seller_id" })
-  sellerId: number;
+  sellerId: string;
 
   @Column({ type: "enum", enum: PetType, nullable: true })
   petType: PetType;

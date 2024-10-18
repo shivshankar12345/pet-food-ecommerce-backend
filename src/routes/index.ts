@@ -13,7 +13,7 @@ const mainRouter = Router();
 mainRouter.use("/api/products", productroutes);
 
 mainRouter.use("/api/users", userRouter);
-// mainRouter.use("/api/categories", categoryRoutes);
+mainRouter.use("/api/product-category",categoryRoutes);
 
 mainRouter.use("/api/admin-panel", jwtAuth, validateAdmin, adminRouter);
 

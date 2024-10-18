@@ -4,10 +4,7 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany,
 } from "typeorm";
-
-import { Product } from "./product.entity";
 
 @Entity("Categories")
 export class Category {
@@ -20,8 +17,8 @@ export class Category {
   @Column({ nullable: true })
   description: string;
 
-  @OneToMany(() => Product, product => product.category) // Relation to Product
-  products: Product[];
+  @Column({default:false})
+  isDeleted: boolean;
 
   @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt: Date;

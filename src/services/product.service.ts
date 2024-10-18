@@ -42,7 +42,7 @@ export class ProductService {
     }
   }
 
-  async getProductById(id: number): Promise<Product> { // id is of type number
+  async getProductById(id: string): Promise<Product> { // id is of type number
     try {
       const product = await this.productRepository.findOne({
         where: { id, isDeleted: false },
@@ -58,7 +58,7 @@ export class ProductService {
   }
 
   async updateProduct(
-    id: number, // id is of type number
+    id:string, // id is of type number
     productData: Partial<Product>
   ): Promise<Product> {
     try {
@@ -74,7 +74,7 @@ export class ProductService {
     }
   }
 
-  async deleteProduct(id: number): Promise<void> { // id is of type number
+  async deleteProduct(id: string): Promise<void> { // id is of type number
     try {
       const existingProduct = await this.getProductById(id);
 
