@@ -1,76 +1,122 @@
 import { Request, Response } from "express";
-import { CategoryService } from "../services/category.service";
+import { categoryRepository } from "../repository/category.respository";
+import { checkRequiredValidation } from "../modules/validation";
 import ApplicationError from "../error/ApplicationError";
 
-const categoryService = new CategoryService();
+export const createCategory = async (
+  req: Request,
+  res: Response,
+  next: Function
+) => {
+  const { name, description } = req.body;
 
-export class CategoryController {
-    async createCategory(req: Request, res: Response) {
-        try {
-            const categoryData = req.body;
-            const category = await categoryService.createCategory(categoryData);
-            return res.status(201).json(category);
-        } catch (error) {
-            if (error instanceof ApplicationError) {
-                return res.status(error.statusCode).json({ message: error.message });
-            }
-            return res.status(500).json({ message: "Internal server error" });
-        }
+  const validationData = await checkRequiredValidation([
+    { field: "CategoryName", value: name, type: "Empty" },
+  ]);
+
+  const trimmedName = name.trim();
+
+  if (trimmedName === 0) {
+    return next(new ApplicationError(400, "Category Name is required"));
+  }
+
+  try {
+    const existingCategory = await categoryRepository.findOne({
+      where: { name },
+    });
+
+    if (existingCategory) {
+      return res
+        .status(400)
+        .json({ message: "Category with this name already exists." });
     }
 
-    async getAllCategories(req: Request, res: Response) {
-        try {
-            const page = parseInt(req.query.page as string) || 1;
-            const limit = parseInt(req.query.limit as string) || 10;
-            const search = req.query.search as string || "";
+    const newCategory = categoryRepository.create({ name, description });
+    const savedCategory = await categoryRepository.save(newCategory);
 
-            const { categories, total } = await categoryService.getAllCategories(page, limit, search);
-            return res.status(200).json({ total, categories });
-        } catch (error) {
-            if (error instanceof ApplicationError) {
-                return res.status(error.statusCode).json({ message: error.message });
-            }
-            return res.status(500).json({ message: "Internal server error" });
-        }
-    }
+    return res.status(201).json(savedCategory);
+  } catch (error: any) {
+    console.error("Error creating category:", error);
+    return next(new ApplicationError(500, "Error creating category"));
+  }
+};
 
-    async getCategoryById(req: Request, res: Response) {
-        try {
-            const { id } = req.params;
-            const category = await categoryService.getCategoryById(id);
-            return res.status(200).json(category);
-        } catch (error) {
-            if (error instanceof ApplicationError) {
-                return res.status(error.statusCode).json({ message: error.message });
-            }
-            return res.status(500).json({ message: "Internal server error" });
-        }
-    }
+export const getAllCategories = async (
+  req: Request,
+  res: Response,
+  next: Function
+) => {
+  try {
+    const categories = await categoryRepository.find();
+    return res.status(200).json(categories);
+  } catch (error: any) {
+    console.error("Error fetching categories:", error);
+    return next(new ApplicationError(500, "Error fetching categories")); // Handle any errors
+  }
+};
 
-    async updateCategory(req: Request, res: Response) {
-        try {
-            const { id } = req.params;
-            const categoryData = req.body;
-            const updatedCategory = await categoryService.updateCategory(id, categoryData);
-            return res.status(200).json(updatedCategory);
-        } catch (error) {
-            if (error instanceof ApplicationError) {
-                return res.status(error.statusCode).json({ message: error.message });
-            }
-            return res.status(500).json({ message: "Internal server error" });
-        }
-    }
+export const getCategoryById = async(
+    req: Request,
+    res:Response,
+    next:Function
+) =>{
+    try{
+        const CategoryId = req.query.id as string;
+        if (!CategoryId) {
+            throw new ApplicationError(400, "Category ID is required");
+          }
+      
+          const validationData = await checkRequiredValidation([
+            { field: "Category ID", value: CategoryId, type: "Empty" },
+          ]);
+      
+          if (!validationData.status) {
+            throw new ApplicationError(400, validationData.message);
+          }
+        const category = await categoryRepository.findOneBy({id:CategoryId});
 
-    async deleteCategory(req: Request, res: Response) {
-        try {
-            const { id } = req.params;
-            await categoryService.deleteCategory(id);
-            return res.status(204).send();
-        } catch (error) {
-            if (error instanceof ApplicationError) {
-                return res.status(error.statusCode).json({ message: error.message });
-            }
-            return res.status(500).json({ message: "Internal server error" });
+        if(!category){
+            return res.status(404).json({message:"Category not found"})
         }
+        res.status(200).json(category);
+    }catch(error){
+        next(error);
     }
 }
+
+export const softDeleteCategory = async (
+    req: Request,
+    res: Response,
+    next: Function
+  ) => {
+    try {
+      const categoryId = req.query.id as string;
+  
+      if (!categoryId) {
+        throw new ApplicationError(400, "Category Id is required");
+      }
+  
+      const validationData = await checkRequiredValidation([
+        { field: "Category Id", value: categoryId, type: "Empty" },
+      ]);
+  
+      if (!validationData.status) {
+        throw new ApplicationError(400, validationData.message);
+      }
+  
+      const category = await categoryRepository.findOneBy({ id: categoryId });
+  
+      if (!category) {
+        return res.status(404).json({ message: "Category not found" });
+      }
+
+      category.isDeleted = true;
+  
+      await categoryRepository.save(category);
+  
+      return res.status(200).json({ message: "Category is soft-deleted" });
+    } catch (error) {
+      next(error);
+    }
+  };
+  
