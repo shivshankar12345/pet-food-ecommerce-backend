@@ -5,6 +5,7 @@ import { Token } from "../entity/token.entity";
 import { Permission } from "../entity/permission.entity";
 import { Role } from "../entity/role.entity";
 import { Category } from "../entity/category.entity";
+import { Crousel } from "../entity/crousel.entity";
 
 export const AppDataSource = new DataSource({
   type: "mysql",
@@ -14,7 +15,7 @@ export const AppDataSource = new DataSource({
   password: process.env.DB_PASSWORD || "",
   database: process.env.DATABASE || "",
   connectorPackage: "mysql2",
-  entities: [Permission, Role, User, Token, Product,Category],
+  entities: [Permission, Role, User, Token, Product, Category, Crousel],
   synchronize: false,
 });
 
