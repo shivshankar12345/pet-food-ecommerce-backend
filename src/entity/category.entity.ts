@@ -4,10 +4,15 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from "typeorm";
+import { Product } from "./product.entity";
 
 @Entity("Categories")
 export class Category {
+  static findOne(arg0: { where: { id: any; }; }) {
+    throw new Error("Method not implemented.");
+  }
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
@@ -19,6 +24,9 @@ export class Category {
 
   @Column({default:false})
   isDeleted: boolean;
+
+  @OneToMany(() => Product, (product) => product.category)
+  products: Product[];
 
   @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt: Date;

@@ -4,10 +4,13 @@ import { Product as ProductType } from "../types/product.types";
 import ApplicationError from "../error/ApplicationError";
 import { checkRequiredValidation } from "../modules/validation";
 import { uploadToCloudinary } from "../utils/cloudinary"; // Using Cloudinary here
-import { Category, PetType } from "../utils/enum";
+import { PetType } from "../utils/enum";
 import Responses from "../modules/responses";
+import { Category } from "../entity/category.entity";
+import { categoryRepository } from "../repository/category.respository";
 
 const productService = new ProductService();
+
 
 export const createProduct = async (
   req: Request,
@@ -15,9 +18,11 @@ export const createProduct = async (
   next: NextFunction
 ) => {
   try {
+    console.log('Request Body:', req.body); // Log the incoming request body
+
     const {
       name,
-      categoryId,
+      category: categoryName, // Expecting only the category name
       price,
       description,
       stock,
@@ -26,9 +31,10 @@ export const createProduct = async (
       petType,
     } = req.body;
 
+    // Validate required fields
     const validationData: any = await checkRequiredValidation([
       { field: "Name", value: name, type: "Empty" },
-      { field: "Category ID", value: categoryId, type: "Empty" },
+      { field: "Category", value: categoryName, type: "Empty" },
       { field: "Price", value: price, type: "Empty" },
       { field: "Description", value: description, type: "Empty" },
       { field: "Stock", value: stock, type: "Empty" },
@@ -41,40 +47,49 @@ export const createProduct = async (
       throw new ApplicationError(400, "Validation is required");
     }
 
-    if (!Object.values(Category).includes(categoryId)) {
-      throw new ApplicationError(400, "Invalid category");
-    }
     if (!Object.values(PetType).includes(petType)) {
       throw new ApplicationError(400, "Invalid petType");
     }
 
+    // Find the existing category by name
+    const existingCategory = await categoryRepository.findOne({
+      where: { name: categoryName },
+    });
+
+    if (!existingCategory) {
+      throw new ApplicationError(400, "Invalid category name");
+    }
+
     const imageFile = req.file;
-    console.log("Uploaded file:", imageFile);
     if (!imageFile) {
       throw new ApplicationError(400, "Image file is required");
     }
 
+    // Upload image to Cloudinary
     const CloudinaryResponse = await uploadToCloudinary(imageFile, "products");
     const imageUrl = CloudinaryResponse.secure_url;
+
     const productData: ProductType = {
       name,
-      categoryId,
+      category: existingCategory, // Use the existing category
       price: parseFloat(price),
       description,
       stock: parseInt(stock, 10),
-      imageUrl, // Use the URL obtained from Cloudinary
-      brandId: brandId,
-      sellerId: sellerId,
+      imageUrl,
+      brandId,
+      sellerId,
       petType,
     };
 
+    // Create the new product
     const newProduct = await productService.createProduct(productData);
-    return Responses.generateSuccessResponse(res, 201, { data: newProduct });
+    return res.status(201).json({ data: newProduct });
   } catch (error: any) {
-    console.error("Error in createProduct:", error); // Log the error
+    console.error("Error in createProduct:", error);
     next(error);
   }
 };
+
 
 export const getAllProducts = async (
   req: Request,
@@ -178,14 +193,22 @@ export const updateProduct = async (
       throw new ApplicationError(404, "Product not found");
     }
 
-    // Validate petType and categoryId
-    const { petType, categoryId } = req.body;
+    // Validate petType and category
+    const { petType, category } = req.body;
 
     if (petType && !Object.values(PetType).includes(petType)) {
       throw new ApplicationError(400, "Invalid petType");
     }
 
-    if (categoryId && !Object.values(Category).includes(categoryId)) {
+    // Validate category
+    if (!category || !category.id) {
+      throw new ApplicationError(400, "Category ID is required");
+    }
+
+    const existingCategory = await categoryRepository.findOne({
+      where: { id: category.id },
+    });
+    if (!existingCategory) {
       throw new ApplicationError(400, "Invalid category");
     }
 
@@ -195,16 +218,17 @@ export const updateProduct = async (
       const CloudinaryResponse = await uploadToCloudinary(req.file, "products");
       imageUrl = CloudinaryResponse.secure_url;
     } else {
-      imageUrl = existingProduct.imageUrl;
+      imageUrl = existingProduct.imageUrl; // Keep existing image if not updating
     }
 
     // Prepare product data for update
     const productData: Partial<ProductType> = {
       ...req.body,
+      category: existingCategory, // Ensure this is the correct category object
       imageUrl,
       id: existingProduct.id,
       createdAt: existingProduct.createdAt,
-      updatedAt: new Date(),
+      updatedAt: new Date(), // Set the updated timestamp
     };
 
     // Update product in the database

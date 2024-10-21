@@ -4,6 +4,7 @@ import {
     getAllCategories,
     getCategoryById, 
     softDeleteCategory,
+    UpdateCategoryById
 
 } from "../controllers/category.controller";
 
@@ -13,5 +14,6 @@ router.post ("/createCategory",createCategory);
 router.get  ("/getAllCategories",getAllCategories);
 router.get ("/getCategoryById",getCategoryById);
 router.delete("/delete",softDeleteCategory);
+router.put("/update",UpdateCategoryById)
 
 export default router;

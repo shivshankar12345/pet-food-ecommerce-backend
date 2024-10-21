@@ -6,15 +6,22 @@ import { Like } from "typeorm";
 
 export class ProductService {
   private productRepository = AppDataSource.getRepository(Product);
+async createProduct(productData: Partial<ProductType>): Promise<Product> {
+  try {
+    // Validate productData here if needed
+    // For example: check if all required fields are present
 
-  async createProduct(productData: Partial<ProductType>): Promise<Product> {
-    try {
-      const product = this.productRepository.create(productData);
-      return await this.productRepository.save(product);
-    } catch (error) {
-      throw new ApplicationError(500, "Error creating product");
-    }
+    const product = this.productRepository.create(productData);
+    
+    const savedProduct = await this.productRepository.save(product);
+    
+    // You can also return a DTO instead of the raw entity if needed
+    return savedProduct;
+  } catch (error) {
+    console.error("Error in createProduct service:", error); // Log error details
+    throw new ApplicationError(500, "Error creating product");
   }
+}
 
   async getAllProducts(
     page: number,
