@@ -20,8 +20,11 @@ export default class AdminContactManageService {
       const newContact = await contactRepository.save(contactObject);
       return newContact;
     } catch (error: any) {
-      if (error instanceof QueryFailedError) {
-        throw new ApplicationError(400, "Contact Already Exists");
+      if (
+        error instanceof QueryFailedError &&
+        error?.driverError?.message?.includes("Duplicate entry")
+      ) {
+        throw new ApplicationError(400, "Contact Already Exists ");
       }
       throw error;
     }
@@ -36,8 +39,11 @@ export default class AdminContactManageService {
       Object.assign(contactData, updateObject);
       await contactRepository.save(contactData);
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        throw new ApplicationError(400, "Contact Already Exists");
+      if (
+        error instanceof QueryFailedError &&
+        error?.driverError?.message?.includes("Duplicate entry")
+      ) {
+        throw new ApplicationError(400, "Contact Already Exists ");
       }
       throw error;
     }
