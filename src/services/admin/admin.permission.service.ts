@@ -1,5 +1,7 @@
+import { QueryFailedError } from "typeorm";
 import { AppDataSource } from "../../db/data-source";
 import { Permission } from "../../entity/permission.entity";
+import ApplicationError from "../../error/ApplicationError";
 
 const permissionRepository = AppDataSource.getRepository(Permission);
 export default class AdminPermissionManageService {
@@ -7,6 +9,12 @@ export default class AdminPermissionManageService {
     try {
       await permissionRepository.save(permission);
     } catch (error) {
+      if (
+        error instanceof QueryFailedError &&
+        error?.driverError?.message?.includes("Duplicate entry")
+      ) {
+        throw new ApplicationError(400, "Permission Already Exist ");
+      }
       throw error;
     }
   }
