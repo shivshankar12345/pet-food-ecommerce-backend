@@ -82,4 +82,9 @@ adminRouter.patch(
   "/contact/updateContact",
   adminContactController.updateContact
 );
+
+adminRouter.delete(
+  "/contact/deleteContact",
+  adminContactController.deleteContact
+);
 export default adminRouter;
