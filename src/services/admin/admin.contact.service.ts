@@ -1,5 +1,5 @@
 import ApplicationError from "../../error/ApplicationError";
-import { TypeORMError, QueryFailedError } from "typeorm";
+import { QueryFailedError } from "typeorm";
 import { contactRepository } from "../../repository/contact.repository";
 import {
   ContactObject,
@@ -23,6 +23,15 @@ export default class AdminContactManageService {
       if (error instanceof QueryFailedError) {
         throw new ApplicationError(400, "Contact Already Exists");
       }
+      throw error;
+    }
+  }
+
+  async getAll() {
+    try {
+      const contacts = await contactRepository.find();
+      return contacts;
+    } catch (error) {
       throw error;
     }
   }

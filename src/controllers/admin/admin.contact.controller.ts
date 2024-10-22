@@ -38,6 +38,15 @@ export default class AdminContactManageController {
     }
   }
 
+  async getAll(req: Request, res: Response, next: NextFunction) {
+    try {
+      const contacts = await adminContactService.getAll();
+      return Responses.generateSuccessResponse(res, 200, { contacts });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async updateContact(req: Request, res: Response, next: NextFunction) {
     try {
       const { id = null, contact_type = null, contact = null } = req.body;
