@@ -78,4 +78,20 @@ export default class AdminContactManageController {
       next(error);
     }
   }
+
+  async deleteContact(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.query;
+      if (!id) {
+        throw new ApplicationError(400, "Please Provide Required fields !!");
+      }
+
+      await adminContactService.deleteContact(id as string);
+      return Responses.generateSuccessResponse(res, 200, {
+        message: "Contact Deleted Successfully !!",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

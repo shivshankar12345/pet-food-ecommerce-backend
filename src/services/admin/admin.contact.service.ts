@@ -51,4 +51,16 @@ export default class AdminContactManageService {
       throw error;
     }
   }
+
+  async deleteContact(id: string) {
+    try {
+      const contact = await contactRepository.findOne({ where: { id } });
+      if (!contact) {
+        throw new ApplicationError(404, "Contact not found");
+      }
+      await contactRepository.remove(contact);
+    } catch (error) {
+      throw error;
+    }
+  }
 }
