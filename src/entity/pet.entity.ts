@@ -8,8 +8,8 @@ import {
 } from "typeorm";
 import { Product } from "./product.entity";
 
-@Entity("Categories")
-export class Category {
+@Entity("Pet")
+export class Pet {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
@@ -22,7 +22,7 @@ export class Category {
   @Column({ default: false })
   isDeleted: boolean;
 
-  @OneToMany(() => Product, product => product.category)
+  @OneToMany(() => Product, product => product.petType)
   products: Product[];
 
   @CreateDateColumn({ name: "created_at", type: "timestamp" })

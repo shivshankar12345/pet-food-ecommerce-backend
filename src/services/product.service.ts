@@ -6,15 +6,22 @@ import { Like } from "typeorm";
 
 export class ProductService {
   private productRepository = AppDataSource.getRepository(Product);
+async createProduct(productData: Partial<ProductType>): Promise<Product> {
+  try {
+    // Validate productData here if needed
+    // For example: check if all required fields are present
 
-  async createProduct(productData: Partial<ProductType>): Promise<Product> {
-    try {
-      const product = this.productRepository.create(productData);
-      return await this.productRepository.save(product);
-    } catch (error) {
-      throw new ApplicationError(500, "Error creating product");
-    }
+    const product = this.productRepository.create(productData);
+    
+    const savedProduct = await this.productRepository.save(product);
+    
+    // You can also return a DTO instead of the raw entity if needed
+    return savedProduct;
+  } catch (error) {
+    console.error("Error in createProduct service:", error); // Log error details
+    throw new ApplicationError(500, "Error creating product");
   }
+}
 
   async getAllProducts(
     page: number,
@@ -42,7 +49,7 @@ export class ProductService {
     }
   }
 
-  async getProductById(id: number): Promise<Product> { // id is of type number
+  async getProductById(id: string): Promise<Product> { // id is of type number
     try {
       const product = await this.productRepository.findOne({
         where: { id, isDeleted: false },
@@ -58,7 +65,7 @@ export class ProductService {
   }
 
   async updateProduct(
-    id: number, // id is of type number
+    id:string, // id is of type number
     productData: Partial<Product>
   ): Promise<Product> {
     try {
@@ -74,7 +81,7 @@ export class ProductService {
     }
   }
 
-  async deleteProduct(id: number): Promise<void> { // id is of type number
+  async deleteProduct(id: string): Promise<void> { // id is of type number
     try {
       const existingProduct = await this.getProductById(id);
 

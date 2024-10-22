@@ -3,11 +3,13 @@ import { ProductService } from "../services/product.service";
 import { Product as ProductType } from "../types/product.types";
 import ApplicationError from "../error/ApplicationError";
 import { checkRequiredValidation } from "../modules/validation";
-import { uploadToCloudinary } from "../utils/cloudinary"; // Using Cloudinary here
-import { Category, PetType } from "../utils/enum";
+import { uploadToCloudinary } from "../utils/cloudinary";
 import Responses from "../modules/responses";
+import { categoryRepository } from "../repository/category.respository";
+import { PetRepository } from "../repository/pet.repository";
 
 const productService = new ProductService();
+
 
 export const createProduct = async (
   req: Request,
@@ -15,20 +17,23 @@ export const createProduct = async (
   next: NextFunction
 ) => {
   try {
+    console.log('Request Body:', req.body); // Log the incoming request body
+
     const {
       name,
-      categoryId,
+      category: categoryName,
       price,
       description,
       stock,
       brandId,
       sellerId,
-      petType,
+      petType, 
     } = req.body;
 
+    // Validate required fields
     const validationData: any = await checkRequiredValidation([
       { field: "Name", value: name, type: "Empty" },
-      { field: "Category ID", value: categoryId, type: "Empty" },
+      { field: "Category", value: categoryName, type: "Empty" },
       { field: "Price", value: price, type: "Empty" },
       { field: "Description", value: description, type: "Empty" },
       { field: "Stock", value: stock, type: "Empty" },
@@ -41,43 +46,54 @@ export const createProduct = async (
       throw new ApplicationError(400, "Validation is required");
     }
 
-    if (!Object.values(Category).includes(categoryId)) {
-      throw new ApplicationError(400, "Invalid category");
-    }
-    if (!Object.values(PetType).includes(petType)) {
-      throw new ApplicationError(400, "Invalid petType");
+    // Check if the pet type exists
+    const existingPet = await PetRepository.findOne({
+      where: { name: petType }
+    });
+
+    if (!existingPet) {
+      throw new ApplicationError(400, "Invalid pet type");
     }
 
-    const imageFile = req.file; // This is the uploaded file
-    console.log("Uploaded file:", imageFile);
+    // Find the existing category by name
+    const existingCategory = await categoryRepository.findOne({
+      where: { name: categoryName },
+    });
+
+    if (!existingCategory) {
+      throw new ApplicationError(400, "Invalid category name");
+    }
+
+    const imageFile = req.file;
     if (!imageFile) {
       throw new ApplicationError(400, "Image file is required");
     }
 
-    const CloudinaryResponse = await uploadToCloudinary(
-      imageFile,
-      "products"
-    );
+    // Upload image to Cloudinary
+    const CloudinaryResponse = await uploadToCloudinary(imageFile, "products");
     const imageUrl = CloudinaryResponse.secure_url;
+
     const productData: ProductType = {
       name,
-      categoryId,
+      category: existingCategory,
       price: parseFloat(price),
       description,
       stock: parseInt(stock, 10),
-      imageUrl, // Use the URL obtained from Cloudinary
-      brandId: parseInt(brandId, 10),
-      sellerId: parseInt(sellerId, 10),
-      petType,
+      imageUrl,
+      brandId,
+      sellerId,
+      petType: existingPet, 
     };
 
+    // Create the new product
     const newProduct = await productService.createProduct(productData);
-    return Responses.generateSuccessResponse(res, 201, { data: newProduct });
+    return res.status(201).json({ data: newProduct });
   } catch (error: any) {
-    console.error("Error in createProduct:", error); // Log the error
+    console.error("Error in createProduct:", error);
     next(error);
   }
 };
+
 
 export const getAllProducts = async (
   req: Request,
@@ -140,7 +156,7 @@ export const getProductById = async (
       throw new ApplicationError(400, validationData.message);
     }
 
-    const product = await productService.getProductById(parseInt(id, 10));
+    const product = await productService.getProductById(id);
 
     if (!product) {
       return Responses.generateErrorResponse(res, 404, {
@@ -175,53 +191,54 @@ export const updateProduct = async (
       throw new ApplicationError(400, validationData.message);
     }
 
-    // Get existing product
-    const existingProduct = await productService.getProductById(
-      parseInt(id, 10)
-    );
+    const existingProduct = await productService.getProductById(id);
     if (!existingProduct) {
       throw new ApplicationError(404, "Product not found");
     }
 
-    // Validate petType and categoryId
-    const { petType, categoryId } = req.body;
+    const { petType, category } = req.body;
 
-    if (petType && !Object.values(PetType).includes(petType)) {
-      throw new ApplicationError(400, "Invalid petType");
+     
+
+    const existingPet = await PetRepository.findOne({
+      where:{name:petType}
+    })
+    if(!existingPet){
+      throw new ApplicationError(400,"Invalid Pet")
     }
 
-    if (categoryId && !Object.values(Category).includes(categoryId)) {
+    const existingCategory = await categoryRepository.findOne({
+      where: { name:category },
+    });
+    if (!existingCategory) {
       throw new ApplicationError(400, "Invalid category");
     }
 
-    // Handle image upload if provided
+
     let imageUrl;
     if (req.file) {
-      const CloudinaryResponse = await uploadToCloudinary(
-        req.file,
-        "products"
-      );
+      const CloudinaryResponse = await uploadToCloudinary(req.file, "products");
       imageUrl = CloudinaryResponse.secure_url;
     } else {
-      imageUrl = existingProduct.imageUrl;
+      imageUrl = existingProduct.imageUrl; 
     }
 
-    // Prepare product data for update
+  
     const productData: Partial<ProductType> = {
       ...req.body,
+      category: existingCategory,
       imageUrl,
+      petType:existingPet,
       id: existingProduct.id,
       createdAt: existingProduct.createdAt,
       updatedAt: new Date(),
     };
 
-    // Update product in the database
     const updatedProduct = await productService.updateProduct(
       existingProduct.id,
       productData
     );
 
-    // Send success response
     return Responses.generateSuccessResponse(res, 200, {
       data: updatedProduct,
     });
@@ -250,14 +267,13 @@ export const deleteProduct = async (
       throw new ApplicationError(400, validationData.message);
     }
 
-    const productId = parseInt(id, 10);
-    const existingProduct = await productService.getProductById(productId);
+    const existingProduct = await productService.getProductById(id);
 
     if (!existingProduct) {
       throw new ApplicationError(404, "Product not found");
     }
 
-    await productService.deleteProduct(productId);
+    await productService.deleteProduct(id);
 
     return Responses.generateSuccessResponse(res, 200, {
       message: "Product deleted successfully",

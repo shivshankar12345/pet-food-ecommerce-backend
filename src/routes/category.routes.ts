@@ -1,13 +1,19 @@
-import { Router } from "express";
-import { CategoryController } from "../controllers/category.controller";
+import express from "express";
+import {
+    createCategory, 
+    getAllCategories,
+    getCategoryById, 
+    softDeleteCategory,
+    UpdateCategoryById
 
-const router = Router();
-const categoryController = new CategoryController();
+} from "../controllers/category.controller";
 
-router.post("/",categoryController.createCategory.bind(categoryController));
-router.get("/", categoryController.getAllCategories.bind(categoryController));
-router.get("/:id", categoryController.getCategoryById.bind(categoryController));
-router.put("/:id", categoryController.updateCategory.bind(categoryController));
-router.delete("/:id", categoryController.deleteCategory.bind(categoryController));
+const router = express.Router();
+
+router.post ("/createCategory",createCategory);
+router.get  ("/getAllCategories",getAllCategories);
+router.get ("/getCategoryById",getCategoryById);
+router.delete("/delete",softDeleteCategory);
+router.put("/update",UpdateCategoryById)
 
 export default router;

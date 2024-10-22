@@ -1,16 +1,27 @@
-import { Entity, PrimaryGeneratedColumn, Column,CreateDateColumn,UpdateDateColumn } from "typeorm";
-import { Category, PetType } from "../utils/enum";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from "typeorm";
+
+import { Category } from "./category.entity";
+import { Pet } from "./pet.entity";
 
 @Entity("Products")
 export class Product {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
   @Column()
   name: string;
 
-  @Column({ type:"enum",enum:Category })
-  categoryId: Category;
+  @ManyToOne(() => Category, category => category.products)
+  @JoinColumn({ name: "category_id" })
+  category: Category;
 
   @Column({ type: "decimal", precision: 10, scale: 2 })
   price: number;
@@ -25,22 +36,21 @@ export class Product {
   imageUrl: string;
 
   @Column({ name: "brand_id", nullable: true })
-  brandId: number;
+  brandId: string;
 
   @Column({ name: "seller_id" })
-  sellerId: number;
+  sellerId: string;
 
-  @Column({ type: "enum", enum: PetType, nullable: true })
-  petType: PetType;
-  
+  @ManyToOne(() => Pet,pet => pet.products)
+  @JoinColumn({ name: "PetType" })
+  petType: Pet;
+
   @Column({ default: false })
-  isDeleted: boolean; 
-  
+  isDeleted: boolean;
+
   @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt: Date;
 
   @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt: Date;
-  category: any;
- 
 }

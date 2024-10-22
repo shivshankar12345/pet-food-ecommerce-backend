@@ -7,6 +7,7 @@ import { Role } from "../entity/role.entity";
 import { Category } from "../entity/category.entity";
 import { Contact } from "../entity/contact.entity";
 import { Crousel } from "../entity/crousel.entity";
+import { Pet } from "../entity/pet.entity";
 
 export const AppDataSource = new DataSource({
   type: "mysql",
@@ -25,8 +26,9 @@ export const AppDataSource = new DataSource({
     Category,
     Contact,
     Crousel,
+    Pet
   ],
-  synchronize: false,
+  synchronize:false,
 });
 
 export const connectToDb = async () => {
