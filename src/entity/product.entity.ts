@@ -7,8 +7,9 @@ import {
   ManyToOne,
   JoinColumn,
 } from "typeorm";
-import {  PetType } from "../utils/enum";
+
 import { Category } from "./category.entity";
+import { Pet } from "./pet.entity";
 
 @Entity("Products")
 export class Product {
@@ -18,7 +19,7 @@ export class Product {
   @Column()
   name: string;
 
-  @ManyToOne(() => Category,(category) => category.products)
+  @ManyToOne(() => Category, category => category.products)
   @JoinColumn({ name: "category_id" })
   category: Category;
 
@@ -40,8 +41,9 @@ export class Product {
   @Column({ name: "seller_id" })
   sellerId: string;
 
-  @Column({ type: "enum", enum: PetType, nullable: true })
-  petType: PetType;
+  @ManyToOne(() => Pet,pet => pet.products)
+  @JoinColumn({ name: "PetType" })
+  petType: Pet;
 
   @Column({ default: false })
   isDeleted: boolean;
@@ -51,5 +53,4 @@ export class Product {
 
   @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt: Date;
-
 }

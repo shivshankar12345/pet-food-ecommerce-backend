@@ -1,7 +1,7 @@
-export enum PetType {
-  DOGS = "dogs",
-  CATS = "cats",
-}
+// export enum PetType {
+//   DOGS = "dogs",
+//   CATS = "cats",
+// }
 
 // export enum Category {
 //   FOOD = "food",

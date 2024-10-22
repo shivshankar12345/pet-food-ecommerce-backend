@@ -3,11 +3,10 @@ import { ProductService } from "../services/product.service";
 import { Product as ProductType } from "../types/product.types";
 import ApplicationError from "../error/ApplicationError";
 import { checkRequiredValidation } from "../modules/validation";
-import { uploadToCloudinary } from "../utils/cloudinary"; // Using Cloudinary here
-import { PetType } from "../utils/enum";
+import { uploadToCloudinary } from "../utils/cloudinary";
 import Responses from "../modules/responses";
-import { Category } from "../entity/category.entity";
 import { categoryRepository } from "../repository/category.respository";
+import { PetRepository } from "../repository/pet.repository";
 
 const productService = new ProductService();
 
@@ -22,13 +21,13 @@ export const createProduct = async (
 
     const {
       name,
-      category: categoryName, // Expecting only the category name
+      category: categoryName,
       price,
       description,
       stock,
       brandId,
       sellerId,
-      petType,
+      petType, 
     } = req.body;
 
     // Validate required fields
@@ -47,8 +46,13 @@ export const createProduct = async (
       throw new ApplicationError(400, "Validation is required");
     }
 
-    if (!Object.values(PetType).includes(petType)) {
-      throw new ApplicationError(400, "Invalid petType");
+    // Check if the pet type exists
+    const existingPet = await PetRepository.findOne({
+      where: { name: petType }
+    });
+
+    if (!existingPet) {
+      throw new ApplicationError(400, "Invalid pet type");
     }
 
     // Find the existing category by name
@@ -71,14 +75,14 @@ export const createProduct = async (
 
     const productData: ProductType = {
       name,
-      category: existingCategory, // Use the existing category
+      category: existingCategory,
       price: parseFloat(price),
       description,
       stock: parseInt(stock, 10),
       imageUrl,
       brandId,
       sellerId,
-      petType,
+      petType: existingPet, 
     };
 
     // Create the new product
@@ -187,57 +191,54 @@ export const updateProduct = async (
       throw new ApplicationError(400, validationData.message);
     }
 
-    // Get existing product
     const existingProduct = await productService.getProductById(id);
     if (!existingProduct) {
       throw new ApplicationError(404, "Product not found");
     }
 
-    // Validate petType and category
     const { petType, category } = req.body;
 
-    if (petType && !Object.values(PetType).includes(petType)) {
-      throw new ApplicationError(400, "Invalid petType");
-    }
+     
 
-    // Validate category
-    if (!category || !category.id) {
-      throw new ApplicationError(400, "Category ID is required");
+    const existingPet = await PetRepository.findOne({
+      where:{name:petType}
+    })
+    if(!existingPet){
+      throw new ApplicationError(400,"Invalid Pet")
     }
 
     const existingCategory = await categoryRepository.findOne({
-      where: { id: category.id },
+      where: { name:category },
     });
     if (!existingCategory) {
       throw new ApplicationError(400, "Invalid category");
     }
 
-    // Handle image upload if provided
+
     let imageUrl;
     if (req.file) {
       const CloudinaryResponse = await uploadToCloudinary(req.file, "products");
       imageUrl = CloudinaryResponse.secure_url;
     } else {
-      imageUrl = existingProduct.imageUrl; // Keep existing image if not updating
+      imageUrl = existingProduct.imageUrl; 
     }
 
-    // Prepare product data for update
+  
     const productData: Partial<ProductType> = {
       ...req.body,
-      category: existingCategory, // Ensure this is the correct category object
+      category: existingCategory,
       imageUrl,
+      petType:existingPet,
       id: existingProduct.id,
       createdAt: existingProduct.createdAt,
-      updatedAt: new Date(), // Set the updated timestamp
+      updatedAt: new Date(),
     };
 
-    // Update product in the database
     const updatedProduct = await productService.updateProduct(
       existingProduct.id,
       productData
     );
 
-    // Send success response
     return Responses.generateSuccessResponse(res, 200, {
       data: updatedProduct,
     });
