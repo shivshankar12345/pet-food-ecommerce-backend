@@ -3,7 +3,7 @@ import { SaveUserParams } from "../types/user.types";
 import { UpdateUser } from "../types/user.types";
 import { userRepository } from "../repository/user.repository";
 import { roleRepository } from "../repository/role.repository";
-
+ 
 export default class UserService {
   async updateUser(user: UpdateUser) {
     try {
@@ -43,7 +43,7 @@ export default class UserService {
       if (!role) {
         throw new ApplicationError(500, "Something went wrong !!");
       }
-
+ 
       const createUser = userRepository.create({ ...user, role });
       const newUser = await userRepository.save(createUser);
       return { user: newUser, newUser: true };
@@ -52,3 +52,4 @@ export default class UserService {
     }
   }
 }
+ 

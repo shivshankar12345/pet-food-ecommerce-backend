@@ -6,22 +6,18 @@ import { Like } from "typeorm";
 
 export class ProductService {
   private productRepository = AppDataSource.getRepository(Product);
-async createProduct(productData: Partial<ProductType>): Promise<Product> {
-  try {
-    // Validate productData here if needed
-    // For example: check if all required fields are present
+  async createProduct(productData: Partial<ProductType>): Promise<Product> {
+    try {
+      const product = this.productRepository.create(productData);
 
-    const product = this.productRepository.create(productData);
-    
-    const savedProduct = await this.productRepository.save(product);
-    
-    // You can also return a DTO instead of the raw entity if needed
-    return savedProduct;
-  } catch (error) {
-    console.error("Error in createProduct service:", error); // Log error details
-    throw new ApplicationError(500, "Error creating product");
+      const savedProduct = await this.productRepository.save(product);
+
+      return savedProduct;
+    } catch (error) {
+      console.error("Error in createProduct service:", error); 
+      throw new ApplicationError(500, "Error creating product");
+    }
   }
-}
 
   async getAllProducts(
     page: number,
@@ -31,16 +27,16 @@ async createProduct(productData: Partial<ProductType>): Promise<Product> {
     const offset = (page - 1) * limit;
 
     try {
-      // Query builder ka istemal karte hain
       const [products, total] = await this.productRepository.findAndCount({
         skip: offset,
         take: limit,
         where: {
           isDeleted: false,
           ...(search && {
-            name: Like(`%${search}%`), // Case-insensitive search
+            name: Like(`%${search}%`),
           }),
         },
+        relations: ["category", "petType"],
       });
 
       return { products, total };
@@ -49,7 +45,7 @@ async createProduct(productData: Partial<ProductType>): Promise<Product> {
     }
   }
 
-  async getProductById(id: string): Promise<Product> { // id is of type number
+  async getProductById(id: string): Promise<Product> {
     try {
       const product = await this.productRepository.findOne({
         where: { id, isDeleted: false },
@@ -65,7 +61,7 @@ async createProduct(productData: Partial<ProductType>): Promise<Product> {
   }
 
   async updateProduct(
-    id:string, // id is of type number
+    id: string,
     productData: Partial<Product>
   ): Promise<Product> {
     try {
@@ -81,7 +77,7 @@ async createProduct(productData: Partial<ProductType>): Promise<Product> {
     }
   }
 
-  async deleteProduct(id: string): Promise<void> { // id is of type number
+  async deleteProduct(id: string): Promise<void> {
     try {
       const existingProduct = await this.getProductById(id);
 
