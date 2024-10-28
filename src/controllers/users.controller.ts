@@ -10,6 +10,7 @@ import { generateOtp } from "../utils/otp";
 import Responses from "../modules/responses";
 import { AppDataSource } from "../db/data-source";
 import { User } from "../entity/user.entity";
+import { getOtpHtml } from "../modules/html";
 
 let generatedOtp: OTP | null = null;
 const userService = new UserService();
@@ -17,7 +18,6 @@ const userService = new UserService();
 export default class UserController {
   async sendOtp(req: Request, res: Response, next: NextFunction) {
     try {
-      console.log("Inside");
       const { email } = req.body;
       if (!email) {
         throw new ApplicationError(400, "Email is Required !!");
@@ -29,7 +29,12 @@ export default class UserController {
         otp: generateOtp(),
       };
       generatedOtp = { ...data };
-      sendMail(email, data.otp);
+      sendMail(
+        email,
+        "SuperTails - OTP Verification",
+        "",
+        getOtpHtml(data.otp)
+      );
       return Responses.generateSuccessResponse(res, 200, {
         data: {
           id: data.id,

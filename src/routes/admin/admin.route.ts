@@ -87,4 +87,9 @@ adminRouter.delete(
   "/contact/deleteContact",
   adminContactController.deleteContact
 );
+
+adminRouter.post(
+  "/contact/connectWithUs",
+  adminContactController.connectWithUs
+);
 export default adminRouter;
