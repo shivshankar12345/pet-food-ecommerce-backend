@@ -1,5 +1,5 @@
 import ApplicationError from "../../error/ApplicationError";
-import { TypeORMError, QueryFailedError } from "typeorm";
+import { QueryFailedError } from "typeorm";
 import { contactRepository } from "../../repository/contact.repository";
 import {
   ContactObject,
@@ -30,6 +30,15 @@ export default class AdminContactManageService {
     }
   }
 
+  async getAll() {
+    try {
+      const contacts = await contactRepository.find();
+      return contacts;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async updateContact(updateObject: ContactObjectOption, id: string) {
     try {
       const contactData = await contactRepository.findOne({ where: { id } });
@@ -45,6 +54,18 @@ export default class AdminContactManageService {
       ) {
         throw new ApplicationError(400, "Contact Already Exists ");
       }
+      throw error;
+    }
+  }
+
+  async deleteContact(id: string) {
+    try {
+      const contact = await contactRepository.findOne({ where: { id } });
+      if (!contact) {
+        throw new ApplicationError(404, "Contact not found");
+      }
+      await contactRepository.remove(contact);
+    } catch (error) {
       throw error;
     }
   }
