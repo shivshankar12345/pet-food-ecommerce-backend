@@ -7,13 +7,19 @@ const transporter = nodemailer.createTransport({
 });
 
 //* Send Mail using Transporter
-const sendMail = async (email: string, otp: string): Promise<void> => {
+const sendMail = async (
+  email: string,
+  subject: string,
+  text: string,
+  html?: string
+): Promise<void> => {
   try {
     const mailOptions = {
       from: "Shahnawaaz Ansari <shaan.ansari1901@gmail.com>",
       to: email,
-      text: `OTP for Login is : ${otp}`,
-      subject: "no reply",
+      subject,
+      text,
+      html: html || "",
     };
     await transporter.sendMail(mailOptions);
   } catch (error) {
