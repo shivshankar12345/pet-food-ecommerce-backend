@@ -3,7 +3,8 @@ import { SaveUserParams } from "../types/user.types";
 import { UpdateUser } from "../types/user.types";
 import { userRepository } from "../repository/user.repository";
 import { roleRepository } from "../repository/role.repository";
- 
+import { QueryFailedError } from "typeorm";
+
 export default class UserService {
   async updateUser(user: UpdateUser) {
     try {
@@ -19,7 +20,13 @@ export default class UserService {
       });
       await userRepository.save(updatedUser);
       return updatedUser;
-    } catch (error) {
+    } catch (error: any) {
+      if (
+        error instanceof QueryFailedError &&
+        error?.driverError?.message?.includes("Duplicate entry")
+      ) {
+        throw new ApplicationError(400, "Phone Already Exist ");
+      }
       throw error;
     }
   }
@@ -41,7 +48,7 @@ export default class UserService {
         where: { role_name: "customer" },
       });
       if (!role) {
-        throw new ApplicationError(500, "Something went wrong !!");
+        throw new Error("");
       }
  
       const createUser = userRepository.create({ ...user, role });

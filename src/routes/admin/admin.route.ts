@@ -71,10 +71,20 @@ adminRouter.get(
 
 adminRouter.post("/contact/addContact", adminContactController.addContact);
 
-adminRouter.get("/contact/getContact", adminContactController.getContact);
+adminRouter.get(
+  "/contact/getSpecificContact",
+  adminContactController.getContact
+);
+
+adminRouter.get("/contact/getAllContact", adminContactController.getAll);
 
 adminRouter.patch(
   "/contact/updateContact",
   adminContactController.updateContact
+);
+
+adminRouter.delete(
+  "/contact/deleteContact",
+  adminContactController.deleteContact
 );
 export default adminRouter;

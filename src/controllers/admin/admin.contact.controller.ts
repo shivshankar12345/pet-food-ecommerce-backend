@@ -38,6 +38,15 @@ export default class AdminContactManageController {
     }
   }
 
+  async getAll(req: Request, res: Response, next: NextFunction) {
+    try {
+      const contacts = await adminContactService.getAll();
+      return Responses.generateSuccessResponse(res, 200, { contacts });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async updateContact(req: Request, res: Response, next: NextFunction) {
     try {
       const { id = null, contact_type = null, contact = null } = req.body;
@@ -64,6 +73,22 @@ export default class AdminContactManageController {
       await adminContactService.updateContact(updateObject, id);
       return Responses.generateSuccessResponse(res, 200, {
         message: "Contact Updated Successfully !!",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async deleteContact(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.query;
+      if (!id) {
+        throw new ApplicationError(400, "Please Provide Required fields !!");
+      }
+
+      await adminContactService.deleteContact(id as string);
+      return Responses.generateSuccessResponse(res, 200, {
+        message: "Contact Deleted Successfully !!",
       });
     } catch (error) {
       next(error);

@@ -1,5 +1,5 @@
 import ApplicationError from "../../error/ApplicationError";
-import { TypeORMError, QueryFailedError } from "typeorm";
+import { QueryFailedError } from "typeorm";
 import { contactRepository } from "../../repository/contact.repository";
 import {
   ContactObject,
@@ -20,9 +20,21 @@ export default class AdminContactManageService {
       const newContact = await contactRepository.save(contactObject);
       return newContact;
     } catch (error: any) {
-      if (error instanceof QueryFailedError) {
-        throw new ApplicationError(400, "Contact Already Exists");
+      if (
+        error instanceof QueryFailedError &&
+        error?.driverError?.message?.includes("Duplicate entry")
+      ) {
+        throw new ApplicationError(400, "Contact Already Exists ");
       }
+      throw error;
+    }
+  }
+
+  async getAll() {
+    try {
+      const contacts = await contactRepository.find();
+      return contacts;
+    } catch (error) {
       throw error;
     }
   }
@@ -36,9 +48,24 @@ export default class AdminContactManageService {
       Object.assign(contactData, updateObject);
       await contactRepository.save(contactData);
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        throw new ApplicationError(400, "Contact Already Exists");
+      if (
+        error instanceof QueryFailedError &&
+        error?.driverError?.message?.includes("Duplicate entry")
+      ) {
+        throw new ApplicationError(400, "Contact Already Exists ");
       }
+      throw error;
+    }
+  }
+
+  async deleteContact(id: string) {
+    try {
+      const contact = await contactRepository.findOne({ where: { id } });
+      if (!contact) {
+        throw new ApplicationError(404, "Contact not found");
+      }
+      await contactRepository.remove(contact);
+    } catch (error) {
       throw error;
     }
   }
