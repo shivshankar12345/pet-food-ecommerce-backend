@@ -54,7 +54,7 @@ export default class UserService {
       if (!role) {
         throw new Error("");
       }
-
+ 
       const createUser = userRepository.create({ ...user, role });
       const newUser = await userRepository.save(createUser);
       return { user: newUser, newUser: true };
@@ -75,3 +75,4 @@ export default class UserService {
     }
   }
 }
+ 

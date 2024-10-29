@@ -1,3 +1,9 @@
+enum ValidationType {
+  Empty = "Empty",
+  Length = "Length",
+  MaxLength255 = "Length maximum 255 characters",
+  ConfirmPassword = "Confirm Password",
+}
 export const checkRequiredValidation = (data: any): Promise<any> => {
   return new Promise((resolve, reject) => {
     let message: string = "";
@@ -5,13 +11,13 @@ export const checkRequiredValidation = (data: any): Promise<any> => {
     for (const item of data) {
       message = "";
       switch (item.type) {
-        case "Empty":
+        case ValidationType.Empty:
           if (!item.value) {
             message = `${item.field} is required.`;
           }
           break;
 
-        case "Length":
+        case ValidationType.Length:
           if (
             typeof item.value === "string" &&
             (item.value.length < 8 || item.value.length > 255)
@@ -20,13 +26,13 @@ export const checkRequiredValidation = (data: any): Promise<any> => {
           }
           break;
 
-        case "Length maximum 255 characters":
+        case ValidationType.MaxLength255:
           if (typeof item.value === "string" && item.value.length > 255) {
             message = `${item.field} length must be a maximum of 255 characters long.`;
           }
           break;
 
-        case "Confirm Password":
+        case ValidationType.ConfirmPassword:
           const passwordIndex = data.findIndex(
             (item1: any) => item1.field === "Password"
           );
@@ -61,3 +67,4 @@ export const checkRequiredValidation = (data: any): Promise<any> => {
 export default {
   checkRequiredValidation,
 };
+
