@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { PetRepository } from "../repository/pet.repository";
 import { checkRequiredValidation } from "../modules/validation";
 import ApplicationError from "../error/ApplicationError";
+import { Like } from "typeorm";
 
 export const createPet = async (
   req: Request,
@@ -18,7 +19,7 @@ export const createPet = async (
     return next(new ApplicationError(400, validationData.message));
   }
   const trimmedName = name.trim();
-  if(!trimmedName){
+  if (!trimmedName) {
     return next(new ApplicationError(400, "Pet Name is required"));
   }
   try {
@@ -37,8 +38,23 @@ export const getAllPets = async (
   next: NextFunction
 ) => {
   try {
-    const pets = await PetRepository.find({ where: { isDeleted: false } });
-    return res.status(200).json(pets);
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 5;
+    const search = (req.query.search as string)?.trim() || "";
+    const [pets, total] = await PetRepository.findAndCount({
+      where: { isDeleted: false, ...(search && { name: Like(`%${search}%`) }) },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+    return res.status(200).json({
+      data: pets,
+      pagination: {
+        currentPage: page,
+        itemsPerPage: limit,
+        totalItems: total,
+        totalPages: Math.ceil(total/ limit), 
+      },
+    });
   } catch (error) {
     console.error("Error fetching pets:", error);
     next(new ApplicationError(500, "Error fetching pets"));

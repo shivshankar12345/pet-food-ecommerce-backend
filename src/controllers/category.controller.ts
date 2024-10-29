@@ -47,7 +47,7 @@ export const getAllCategories = async (
   next: Function
 ) => {
   try {
-    const categories = await categoryRepository.find();
+    const categories = await categoryRepository.find({where:{isDeleted:false}});
     return res.status(200).json(categories);
   } catch (error: any) {
     console.error("Error fetching categories:", error);
