@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import AdminContactManageService from "../../services/admin/admin.contact.service";
 import ApplicationError from "../../error/ApplicationError";
 import Responses from "../../modules/responses";
+import sendMail from "../../utils/nodemailer";
+import { userQueryAdminHtml, userQueryHtml } from "../../modules/html";
 
 const adminContactService = new AdminContactManageService();
 
@@ -89,6 +91,32 @@ export default class AdminContactManageController {
       await adminContactService.deleteContact(id as string);
       return Responses.generateSuccessResponse(res, 200, {
         message: "Contact Deleted Successfully !!",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async connectWithUs(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { name, email, message } = req.body;
+      if (!name || !email || !message) {
+        throw new ApplicationError(400, "Please Provide Required fields !!");
+      }
+      sendMail(
+        email,
+        "SuperTails - Query Registration Confirmation",
+        "",
+        userQueryHtml(name)
+      );
+      sendMail(
+        "learningphase08@gmail.com",
+        `SuperTails - New Query Notification`,
+        "",
+        userQueryAdminHtml(name, email, message)
+      );
+      return Responses.generateSuccessResponse(res, 200, {
+        message: "Connected Successfully !!",
       });
     } catch (error) {
       next(error);

@@ -1,18 +1,22 @@
 import ApplicationError from "../error/ApplicationError";
 import { SaveUserParams } from "../types/user.types";
-import { UpdateUser } from "../types/user.types";
+import { UserOptional, Id } from "../types/user.types";
 import { userRepository } from "../repository/user.repository";
 import { roleRepository } from "../repository/role.repository";
 import { QueryFailedError } from "typeorm";
 
 export default class UserService {
-  async updateUser(user: UpdateUser) {
+  async updateUser(user: UserOptional & Id) {
     try {
-      const updatedUser = await userRepository.findOne({
-        where: { id: user.id },
-      });
+      const updatedUser = await this.getUser({ id: user.id });
       if (!updatedUser) {
         throw new ApplicationError(404, "User not found !");
+      }
+
+      if (user.gst_num && updatedUser.gst_num) {
+        {
+          throw new ApplicationError(400, "Can't update the Details");
+        }
       }
       Object.assign(updatedUser, {
         ...user,
@@ -54,6 +58,18 @@ export default class UserService {
       const createUser = userRepository.create({ ...user, role });
       const newUser = await userRepository.save(createUser);
       return { user: newUser, newUser: true };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getUser(filter: UserOptional | Id) {
+    try {
+      const user = await userRepository.findOne({
+        where: filter,
+        relations: { role: true },
+      });
+      return user;
     } catch (error) {
       throw error;
     }
