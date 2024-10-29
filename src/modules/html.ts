@@ -148,3 +148,59 @@ export const userQueryHtml = (name: string) => `  <div
       </div>
     </div>
   </div>`;
+
+export const userSellerRequest = (name: string) =>
+  `<div
+      style="
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 0;
+      "
+    >
+      <div
+        style="
+          width: 100%;
+          max-width: 600px;
+          margin: 50px auto;
+          padding: 20px;
+          background-color: #ffffff;
+          border-radius: 8px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        "
+      >
+        <h1 style="color: #4a90e2; text-align: center">
+          Seller Partnership Request
+        </h1>
+
+        <h2 style="color: #333">Dear ${name},</h2>
+        <p style="color: #555">
+          Thank you for your interest in becoming a Seller Partner with us!
+        </p>
+
+        <p style="color: #555">
+          We have successfully registered your request. Our team is currently
+          working hard to verify the documents you have submited.
+        </p>
+
+        <p style="color: #555">
+          Once everything is verified, we will activate your seller account.
+          Until then, feel free to explore our products and services!
+        </p>
+
+        <div style="margin-top: 25px">
+          <p style="color: #777">Best regards,<br />Team SuperTails</p>
+        </div>
+
+        <div
+          style="
+            margin-top: 20px;
+            font-size: 14px;
+            color: #777;
+            text-align: center;
+          "
+        >
+          © 2024 SuperTails. All rights reserved.
+        </div>
+      </div>
+    </div>`;

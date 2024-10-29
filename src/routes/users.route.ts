@@ -32,4 +32,5 @@ userRouter.post(
   }
 );
 
+userRouter.get("/getUser", jwtAuth, userController.getUserInformation);
 export default userRouter;

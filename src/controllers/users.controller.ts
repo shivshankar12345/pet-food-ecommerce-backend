@@ -4,13 +4,13 @@ import sendMail from "../utils/nodemailer";
 import { OTP } from "../types/otp.types";
 import UserService from "../services/users.service";
 import AuthTokens from "../utils/tokens";
-import { UpdateUser } from "../types/user.types";
+import { UserOptional, Id } from "../types/user.types";
 import { v4 as uuidv4 } from "uuid";
 import { generateOtp } from "../utils/otp";
 import Responses from "../modules/responses";
 import { AppDataSource } from "../db/data-source";
 import { User } from "../entity/user.entity";
-import { getOtpHtml } from "../modules/html";
+import { getOtpHtml, userSellerRequest } from "../modules/html";
 
 let generatedOtp: OTP | null = null;
 const userService = new UserService();
@@ -95,7 +95,7 @@ export default class UserController {
         gst_num = null,
       } = req.body;
       const { id } = req as any;
-      const data_to_update: UpdateUser = { id };
+      const data_to_update: UserOptional & Id = { id };
       if (name) {
         data_to_update.name = name;
       }
@@ -140,9 +140,32 @@ export default class UserController {
       if (!pan_num || !gst_num) {
         throw new ApplicationError(400, "Please Enter Required fields");
       }
-      await userService.updateUser({ pan_num, gst_num, id });
+      const user = await userService.updateUser({ pan_num, gst_num, id });
+      sendMail(
+        user.email,
+        "SuperTails - Seller Partnership Request Confirmation",
+        "",
+        userSellerRequest(user.name)
+      );
       Responses.generateSuccessResponse(res, 200, {
         message: "Seller Request Created Successfully ",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getUserInformation(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req as any;
+      if (!id) {
+        throw new ApplicationError(401, "Please login first");
+      }
+      const user = await userService.getUser({ id });
+      return Responses.generateSuccessResponse(res, 200, {
+        email: user?.email,
+        sellerRequest:
+          user?.role.role_name === "customer" && user.gst_num ? true : false,
       });
     } catch (error) {
       next(error);
