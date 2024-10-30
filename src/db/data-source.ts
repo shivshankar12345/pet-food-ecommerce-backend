@@ -26,9 +26,9 @@ export const AppDataSource = new DataSource({
     Category,
     Contact,
     Crousel,
-    Pet
+    Pet,
   ],
-  synchronize:false,
+  synchronize: false,
 });
 
 export const connectToDb = async () => {

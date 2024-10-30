@@ -1,3 +1,4 @@
+import ApplicationError from "../../error/ApplicationError";
 import { crouselRepository } from "../../repository/crousel.repository";
 import { CrouselObject } from "../../types/crousel.types";
 export default class AdminCrouselManageService {
@@ -14,6 +15,18 @@ export default class AdminCrouselManageService {
     try {
       const crousel = await crouselRepository.save(crouselData);
       return crousel;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteCrouselData(id: string) {
+    try {
+      const crousel = await crouselRepository.findOne({ where: { id } });
+      if (!crousel) {
+        throw new ApplicationError(400, "Crousel not found !!");
+      }
+      await crouselRepository.remove(crousel);
     } catch (error) {
       throw error;
     }
