@@ -1,16 +1,18 @@
-import { Category, PetType } from "../utils/enum";
+import { Category } from "../entity/category.entity";
+
+import { Pet } from "../entity/pet.entity";
 
 export interface Product {
-  id?: number;
+  id?: string;
   name: string;
-  categoryId: Category;
+  category: Category;
   price: number;
   description?: string;
   stock: number;
   imageUrl: string;
-  brandId?: number;
-  sellerId: number;
-  petType?: PetType;
-  createdAt?: Date; 
-  updatedAt?: Date; 
+  brandId?: string;
+  sellerId: string;
+  petType: Pet;
+  createdAt?: Date;
+  updatedAt?: Date;
 }

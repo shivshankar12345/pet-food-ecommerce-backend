@@ -1,6 +1,9 @@
 //* Packages
 import express, { Express, NextFunction, Request, Response } from "express";
 import cors from "cors";
+import morgan from "morgan";
+import path from "path";
+import fs from "fs";
 
 //* Internal Modules
 import mainRouter from "./routes";
@@ -10,7 +13,21 @@ import Responses from "./modules/responses";
 //* Initialize Server
 const app: Express = express();
 
+//* Create Log file Stream
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, "logs", "access.log")
+);
+
 //* Middlewares
+app.use(
+  morgan("combined", {
+    skip(req, res) {
+      return res.statusCode < 400;
+    },
+    stream: accessLogStream,
+  })
+);
+
 app.use(
   cors({
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
