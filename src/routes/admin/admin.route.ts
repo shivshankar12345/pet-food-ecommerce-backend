@@ -69,4 +69,27 @@ adminRouter.get(
   adminLandingPageController.getCrousel
 );
 
+adminRouter.post("/contact/addContact", adminContactController.addContact);
+
+adminRouter.get(
+  "/contact/getSpecificContact",
+  adminContactController.getContact
+);
+
+adminRouter.get("/contact/getAllContact", adminContactController.getAll);
+
+adminRouter.patch(
+  "/contact/updateContact",
+  adminContactController.updateContact
+);
+
+adminRouter.delete(
+  "/contact/deleteContact",
+  adminContactController.deleteContact
+);
+
+adminRouter.post(
+  "/contact/connectWithUs",
+  adminContactController.connectWithUs
+);
 export default adminRouter;

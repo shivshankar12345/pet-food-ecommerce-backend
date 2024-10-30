@@ -31,4 +31,19 @@ export default class AdminLandingPageManageController {
       next(error);
     }
   }
+
+  async deleteCrousel(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      if (!id) {
+        throw new ApplicationError(400, "Please Provide Crousel ID");
+      }
+      await adminCrouselService.deleteCrouselData(id);
+      return Responses.generateSuccessResponse(res, 200, {
+        message: "Crousel Delete Successfully !!",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
