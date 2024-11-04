@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 import SellerController from "../controllers/seller.controller";
+import { approveSeller, rejectSeller } from "../middlewares/sellerRequest";
 
 const sellerRouter = Router();
 const sellerController = new SellerController();
@@ -10,19 +11,13 @@ sellerRouter.get("/getPendingSeller", sellerController.getPendingSeller);
 
 sellerRouter.patch(
   "/changeSellerStatus/approvedSeller",
-  (req: Request, res: Response, next: NextFunction) => {
-    req.body.is_verified = true;
-    next();
-  },
+  approveSeller,
   sellerController.changeSellerStatus
 );
 
 sellerRouter.patch(
   "/changeSellerStatus/rejectSeller",
-  (req: Request, res: Response, next: NextFunction) => {
-    req.body.is_verified = false;
-    next();
-  },
+  rejectSeller,
   sellerController.changeSellerStatus
 );
 

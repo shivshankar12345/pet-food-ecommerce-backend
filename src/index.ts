@@ -4,6 +4,8 @@ import cors from "cors";
 import morgan from "morgan";
 import path from "path";
 import fs from "fs";
+import swagger from "swagger-ui-express";
+import swaggerJson from "../swagger.json";
 
 //* Internal Modules
 import mainRouter from "./routes/index.routes";
@@ -43,6 +45,8 @@ app.get("/", (req: Request, res: Response) => {
     message: "Nodejs with Typescript Running !!",
   });
 });
+
+app.use("/apiDocs", swagger.serve, swagger.setup(swaggerJson));
 
 app.use(mainRouter);
 

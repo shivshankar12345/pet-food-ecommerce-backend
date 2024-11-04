@@ -20,7 +20,7 @@ mainRouter.use("/api/product-category", categoryRoutes);
 
 mainRouter.use("/api/product-pet", petRoutes);
 
-mainRouter.use("/api/seller-section", sellerRouter);
+mainRouter.use("/api/seller", sellerRouter);
 
 mainRouter.use("/api/landing-page", landingPageRouter);
 
