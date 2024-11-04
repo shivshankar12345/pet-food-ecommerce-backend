@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
 import AuthTokens from "../utils/tokens";
 import { AppDataSource } from "../db/data-source";
 import { Token } from "../entity/token.entity";

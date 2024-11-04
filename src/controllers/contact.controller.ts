@@ -1,20 +1,20 @@
 import { NextFunction, Request, Response } from "express";
-import AdminContactManageService from "../../services/admin/admin.contact.service";
-import ApplicationError from "../../error/ApplicationError";
-import Responses from "../../modules/responses";
-import sendMail from "../../utils/nodemailer";
-import { userQueryAdminHtml, userQueryHtml } from "../../modules/html";
+import ContactService from "../services/contact.service";
+import ApplicationError from "../error/ApplicationError";
+import Responses from "../modules/responses";
+import { userQueryAdminHtml, userQueryHtml } from "../modules/html";
+import sendMail from "../utils/nodemailer";
 
-const adminContactService = new AdminContactManageService();
+const contactService = new ContactService();
 
-export default class AdminContactManageController {
+export default class ContactController {
   async getContact(req: Request, res: Response, next: NextFunction) {
     try {
       const { contact_type } = req.query;
       if (contact_type != "Phone" && contact_type != "Email") {
         throw new ApplicationError(400, "Incorrect Contact Type");
       }
-      const contacts = await adminContactService.getContact(contact_type);
+      const contacts = await contactService.getContact(contact_type);
       return Responses.generateSuccessResponse(res, 200, { contacts });
     } catch (error) {
       next(error);
@@ -31,7 +31,7 @@ export default class AdminContactManageController {
       if (contact_type != "Phone" && contact_type != "Email") {
         throw new ApplicationError(400, "Incorrect Contact Type");
       }
-      await adminContactService.addContact({ contact_type, contact });
+      await contactService.addContact({ contact_type, contact });
       return Responses.generateSuccessResponse(res, 201, {
         message: "Contact Added Successfully !!",
       });
@@ -42,7 +42,7 @@ export default class AdminContactManageController {
 
   async getAll(req: Request, res: Response, next: NextFunction) {
     try {
-      const contacts = await adminContactService.getAll();
+      const contacts = await contactService.getAll();
       return Responses.generateSuccessResponse(res, 200, { contacts });
     } catch (error) {
       next(error);
@@ -72,7 +72,7 @@ export default class AdminContactManageController {
         );
       }
 
-      await adminContactService.updateContact(updateObject, id);
+      await contactService.updateContact(updateObject, id);
       return Responses.generateSuccessResponse(res, 200, {
         message: "Contact Updated Successfully !!",
       });
@@ -88,7 +88,7 @@ export default class AdminContactManageController {
         throw new ApplicationError(400, "Please Provide Required fields !!");
       }
 
-      await adminContactService.deleteContact(id as string);
+      await contactService.deleteContact(id as string);
       return Responses.generateSuccessResponse(res, 200, {
         message: "Contact Deleted Successfully !!",
       });

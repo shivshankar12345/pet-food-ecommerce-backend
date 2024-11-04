@@ -1,12 +1,12 @@
-import ApplicationError from "../../error/ApplicationError";
+import ApplicationError from "../error/ApplicationError";
 import { QueryFailedError } from "typeorm";
-import { contactRepository } from "../../repository/contact.repository";
+import { contactRepository } from "../repository/contact.repository";
 import {
   ContactObject,
   ContactObjectOption,
   ContactType,
-} from "../../types/contact.types";
-export default class AdminContactManageService {
+} from "../types/contact.types";
+export default class ContactService {
   async getContact(contact_type: ContactType) {
     try {
       const contact = await contactRepository.find({ where: { contact_type } });

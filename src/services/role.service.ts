@@ -1,12 +1,12 @@
 import { QueryFailedError } from "typeorm";
-import { AppDataSource } from "../../db/data-source";
-import { Permission } from "../../entity/permission.entity";
-import { Role } from "../../entity/role.entity";
-import ApplicationError from "../../error/ApplicationError";
+import { AppDataSource } from "../db/data-source";
+import { Permission } from "../entity/permission.entity";
+import { Role } from "../entity/role.entity";
+import ApplicationError from "../error/ApplicationError";
 
 const roleRepository = AppDataSource.getRepository(Role);
 const permissionRepositry = AppDataSource.getRepository(Permission);
-export default class AdminRoleManageService {
+export default class RoleService {
   async create({
     role_name,
     permission,
