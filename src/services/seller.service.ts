@@ -1,10 +1,10 @@
 import { IsNull, Like, Not } from "typeorm";
-import ApplicationError from "../../error/ApplicationError";
-import { userRepository } from "../../repository/user.repository";
-import { roleRepository } from "../../repository/role.repository";
-import { Role } from "../../entity/role.entity";
+import ApplicationError from "../error/ApplicationError";
+import { userRepository } from "../repository/user.repository";
+import { roleRepository } from "../repository/role.repository";
+import { Role } from "../entity/role.entity";
 
-export default class AdminSellerManageService {
+export default class SellerManageService {
   async getVerified(skip: number, take: number, search: string) {
     try {
       const verified_sellers = await userRepository.find({

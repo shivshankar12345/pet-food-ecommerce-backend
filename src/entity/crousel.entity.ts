@@ -7,4 +7,7 @@ export class Crousel {
 
   @Column({ nullable: false })
   imageUrl: string;
+
+  @Column({ nullable: false })
+  name: string;
 }

@@ -1,17 +1,17 @@
 import { NextFunction, Request, Response } from "express";
-import AdminSellerManageService from "../../services/admin/admin.sellers.service";
-import Responses from "../../modules/responses";
-import ApplicationError from "../../error/ApplicationError";
+import Responses from "../modules/responses";
+import ApplicationError from "../error/ApplicationError";
+import SellerManageService from "../services/seller.service";
 
-const adminSellerService = new AdminSellerManageService();
-export default class AdminSellerManageController {
+const sellerService = new SellerManageService();
+export default class SellerController {
   async getVerifiedSeller(req: Request, res: Response, next: NextFunction) {
     try {
       let { limit, page_num, search = "" } = req.query;
       const limitOfDocs = limit ? parseInt(limit as string) : 10;
       const skipElements =
         (page_num ? parseInt(page_num as string) - 1 : 0) * limitOfDocs;
-      const verifiedSellers = await adminSellerService.getVerified(
+      const verifiedSellers = await sellerService.getVerified(
         skipElements,
         limitOfDocs,
         search as string
@@ -39,7 +39,7 @@ export default class AdminSellerManageController {
       const limitOfDocs = limit ? parseInt(limit as string) : 10;
       const skipElements =
         (page_num ? parseInt(page_num as string) - 1 : 0) * limitOfDocs;
-      const pendingSeller = await adminSellerService.getPending(
+      const pendingSeller = await sellerService.getPending(
         skipElements,
         limitOfDocs,
         search as string
@@ -68,7 +68,7 @@ export default class AdminSellerManageController {
       if (!id || is_verified == null) {
         throw new ApplicationError(400, "Please Enter Required fields !!");
       }
-      await adminSellerService.updateSeller({ id, is_verified });
+      await sellerService.updateSeller({ id, is_verified });
       return Responses.generateSuccessResponse(res, 200, {
         message: "Seller updated Successfully !!",
       });

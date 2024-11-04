@@ -1,7 +1,8 @@
-import ApplicationError from "../../error/ApplicationError";
-import { crouselRepository } from "../../repository/crousel.repository";
-import { CrouselObject } from "../../types/crousel.types";
-export default class AdminCrouselManageService {
+import ApplicationError from "../error/ApplicationError";
+import { crouselRepository } from "../repository/crousel.repository";
+import { CrouselObject } from "../types/crousel.types";
+
+export default class LandingPageService {
   async getCrouselData() {
     try {
       const data = await crouselRepository.find();

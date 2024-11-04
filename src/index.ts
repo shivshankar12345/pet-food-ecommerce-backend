@@ -6,7 +6,7 @@ import path from "path";
 import fs from "fs";
 
 //* Internal Modules
-import mainRouter from "./routes";
+import mainRouter from "./routes/index.routes";
 import ApplicationError from "./error/ApplicationError";
 import Responses from "./modules/responses";
 
