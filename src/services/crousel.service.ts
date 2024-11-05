@@ -3,7 +3,7 @@ import { crouselRepository } from "../repository/crousel.repository";
 import { CrouselObject } from "../types/crousel.types";
 import { deleteFromCloudinary, uploadToCloudinary } from "../utils/cloudinary";
 
-export default class LandingPageService {
+export default class CrouselService {
   async getCrouselData() {
     try {
       const data = await crouselRepository.find();
