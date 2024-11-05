@@ -1,0 +1,47 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Docs for Pet Food Apis",
+    "description": "A Pet Food E Commerce Application for Pet Lovers",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000",
+      "description": "local Address to Test the API"
+    }
+  ],
+  "paths": {
+    "/api/users": {
+      "get": {
+        "summary": "Get the list of All Users",
+        "tags": ["User"],
+        "responses": {
+          "200": {
+            "description": "A Json Array of Pet Application",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {},
+          "500": {}
+        }
+      }
+    }
+  }
+}

@@ -4,6 +4,8 @@ import cors from "cors";
 import morgan from "morgan";
 import path from "path";
 import fs from "fs";
+import swagger from "swagger-ui-express";
+import swaggerJson from "../swagger.json";
 
 //* Internal Modules
 import mainRouter from "./routes/index.routes";
@@ -44,7 +46,9 @@ app.get("/", (req: Request, res: Response) => {
   });
 });
 
-app.use(mainRouter);
+app.use("/apiDocs", swagger.serve, swagger.setup(swaggerJson));
+
+app.use("/api", mainRouter);
 
 //* Error Handling Middleware
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {

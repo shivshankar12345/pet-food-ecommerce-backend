@@ -15,7 +15,7 @@ export default class UserService {
 
       if (user.gst_num && updatedUser.gst_num) {
         {
-          throw new ApplicationError(400, "Can't update the Details");
+          throw new ApplicationError(400, "Seller Request Already Created !!");
         }
       }
       Object.assign(updatedUser, {

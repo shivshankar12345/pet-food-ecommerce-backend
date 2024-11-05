@@ -48,13 +48,13 @@ export const uploadToCloudinary = (
 };
 
 // Function to delete an image from Cloudinary by public ID
-// export const deleteFromCloudinary = async (publicId: string) => {
-//   try {
-//     const result = await cloudinary.uploader.destroy(publicId);
-//     return result;
-//   } catch (err: any) {
-//     const errorMessage =
-//       err.message || "Internal server error while deleting from Cloudinary";
-//     throw new ApplicationError(500, errorMessage);
-//   }
-// };
+export const deleteFromCloudinary = async (publicId: string) => {
+  try {
+    const result = await cloudinary.uploader.destroy(publicId);
+    return result;
+  } catch (err: any) {
+    const errorMessage =
+      err.message || "Internal server error while deleting from Cloudinary";
+    throw new ApplicationError(500, errorMessage);
+  }
+};

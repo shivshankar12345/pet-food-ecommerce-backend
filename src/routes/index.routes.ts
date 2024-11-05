@@ -4,7 +4,7 @@ import productroutes from "./product.routes";
 import jwtAuth from "../middlewares/jwtAuth";
 import categoryRoutes from "./category.routes";
 import petRoutes from "./pet.routes";
-import landingPageRouter from "./landingPage.routes";
+import landingPageRouter from "./crousel.routes";
 import contactRouter from "./contact.routes";
 import permissionRouter from "./permission.routes";
 import roleRouter from "./role.routes";
@@ -12,22 +12,22 @@ import sellerRouter from "./seller.routes";
 
 const mainRouter = Router();
 
-mainRouter.use("/api/products", productroutes);
+mainRouter.use("/products", productroutes);
 
-mainRouter.use("/api/users", userRouter);
+mainRouter.use("/users", userRouter);
 
-mainRouter.use("/api/product-category", categoryRoutes);
+mainRouter.use("/product-category", categoryRoutes);
 
-mainRouter.use("/api/product-pet", petRoutes);
+mainRouter.use("/product-pet", petRoutes);
 
-mainRouter.use("/api/seller-section", sellerRouter);
+mainRouter.use("/seller", sellerRouter);
 
-mainRouter.use("/api/landing-page", landingPageRouter);
+mainRouter.use("/crousel", landingPageRouter);
 
-mainRouter.use("/api/permission", permissionRouter);
+mainRouter.use("/permission", permissionRouter);
 
-mainRouter.use("/api/contact", contactRouter);
+mainRouter.use("/contact", contactRouter);
 
-mainRouter.use("/api/role", roleRouter);
+mainRouter.use("/role", roleRouter);
 
 export default mainRouter;

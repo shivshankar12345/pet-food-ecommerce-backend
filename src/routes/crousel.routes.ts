@@ -1,18 +1,18 @@
 import { Router } from "express";
-import LandingPageController from "../controllers/landingPage.controller";
+import LandingPageController from "../controllers/crousel.controller";
 import { upload } from "../middlewares/upload.middleware";
 
 const landingPageRouter = Router();
 const landingPageController = new LandingPageController();
 
-landingPageRouter.get("/crousel/getImages", landingPageController.getCrousel);
+landingPageRouter.get("/getImages", landingPageController.getCrousel);
 landingPageRouter.post(
-  "/crousel/addImage",
+  "/addImage",
   upload.single("imageUrl"),
   landingPageController.addCrousel
 );
 landingPageRouter.delete(
-  "/crousel/deleteImage/:id",
+  "/deleteImage/:id",
   landingPageController.deleteCrousel
 );
 
