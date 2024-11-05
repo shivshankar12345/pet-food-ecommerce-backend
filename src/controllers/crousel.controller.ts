@@ -2,11 +2,11 @@ import { NextFunction, Request, Response } from "express";
 import { uploadToCloudinary } from "../utils/cloudinary";
 import Responses from "../modules/responses";
 import ApplicationError from "../error/ApplicationError";
-import LandingPageService from "../services/landingPage.service";
+import CrouselService from "../services/crousel.service";
 
-const landingPageService = new LandingPageService();
+const crouselService = new CrouselService();
 
-export default class LandingPageController {
+export default class CrouselController {
   async addCrousel(req: Request, res: Response, next: NextFunction) {
     try {
       const imageFile = req.file;
@@ -41,7 +41,7 @@ export default class LandingPageController {
       // }
 
       const imageUrl = cloudinaryResponse.secure_url;
-      await landingPageService.addCrouselData({ imageUrl, name });
+      await crouselService.addCrouselData({ imageUrl, name });
       return Responses.generateSuccessResponse(res, 201, {
         message: "Image Uploaded Successfuly !!",
       });
@@ -52,7 +52,7 @@ export default class LandingPageController {
 
   async getCrousel(req: Request, res: Response, next: NextFunction) {
     try {
-      const crouselData = await landingPageService.getCrouselData();
+      const crouselData = await crouselService.getCrouselData();
       return Responses.generateSuccessResponse(res, 200, { crouselData });
     } catch (error) {
       next(error);
@@ -65,7 +65,7 @@ export default class LandingPageController {
       if (!id) {
         throw new ApplicationError(400, "Please Provide Crousel ID");
       }
-      await landingPageService.deleteCrouselData(id);
+      await crouselService.deleteCrouselData(id);
       return Responses.generateSuccessResponse(res, 200, {
         message: "Crousel Delete Successfully !!",
       });

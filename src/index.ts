@@ -48,7 +48,7 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/apiDocs", swagger.serve, swagger.setup(swaggerJson));
 
-app.use(mainRouter);
+app.use("/api", mainRouter);
 
 //* Error Handling Middleware
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {

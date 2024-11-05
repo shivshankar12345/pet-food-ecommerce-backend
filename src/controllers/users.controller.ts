@@ -163,9 +163,15 @@ export default class UserController {
       }
       const user = await userService.getUser({ id });
       return Responses.generateSuccessResponse(res, 200, {
-        email: user?.email,
-        sellerRequest:
-          user?.role.role_name === "customer" && user.gst_num ? true : false,
+        user: {
+          name: user?.name || "N/A",
+          email: user?.email || "N/A",
+          phone: user?.phone || "N/A",
+          gender: user?.gender || "N/A",
+          is_active: user?.is_active,
+          sellerRequest:
+            user?.role.role_name === "customer" && user.gst_num ? true : false,
+        },
       });
     } catch (error) {
       next(error);
