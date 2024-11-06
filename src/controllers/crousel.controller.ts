@@ -10,8 +10,8 @@ export default class CrouselController {
   async addCrousel(req: Request, res: Response, next: NextFunction) {
     try {
       const imageFile = req.file;
-      const { name } = req.body;
-      if (!imageFile || !name) {
+      const { name, priority } = req.body;
+      if (!imageFile || !name || !priority) {
         throw new ApplicationError(400, "Provide Required fields !!");
       }
       const cloudinaryResponse = await uploadToCloudinary(imageFile, "Crousel");
@@ -41,7 +41,11 @@ export default class CrouselController {
       // }
 
       const imageUrl = cloudinaryResponse.secure_url;
-      await crouselService.addCrouselData({ imageUrl, name });
+      await crouselService.addCrouselData({
+        imageUrl,
+        name,
+        priority: parseInt(priority as string),
+      });
       return Responses.generateSuccessResponse(res, 201, {
         message: "Image Uploaded Successfuly !!",
       });
@@ -52,8 +56,49 @@ export default class CrouselController {
 
   async getCrousel(req: Request, res: Response, next: NextFunction) {
     try {
-      const crouselData = await crouselService.getCrouselData();
-      return Responses.generateSuccessResponse(res, 200, { crouselData });
+      let { limit, page_num, search = "" } = req.query;
+      const limitOfDocs = limit ? parseInt(limit as string) : 10;
+      const skipElements =
+        (page_num ? parseInt(page_num as string) - 1 : 0) * limitOfDocs;
+      const crouselData = await crouselService.getCrouselData(
+        limitOfDocs,
+        search as string,
+        skipElements
+      );
+
+      const total_pages =
+        (Math.trunc(crouselData.total_images / limitOfDocs) ==
+        crouselData.total_images / limitOfDocs
+          ? crouselData.total_images / limitOfDocs
+          : Math.trunc(crouselData.total_images / limitOfDocs) + 1) || 1;
+      return Responses.generateSuccessResponse(res, 200, {
+        ...crouselData,
+        current_page: page_num ? parseInt(page_num as string) : 1,
+        total_pages,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async updateCrousel(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const { priority, name } = req.body;
+      const imageFile = req.file;
+      let cloudinaryResponse;
+      if (imageFile) {
+        cloudinaryResponse = await uploadToCloudinary(imageFile, "Crousel");
+      }
+      await crouselService.updateCrousel(
+        id as string,
+        imageFile
+          ? { priority, name, imageUrl: cloudinaryResponse?.secure_url }
+          : { priority, name }
+      );
+      Responses.generateSuccessResponse(res, 200, {
+        message: "Data Updated Successfully !!",
+      });
     } catch (error) {
       next(error);
     }
