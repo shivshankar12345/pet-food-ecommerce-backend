@@ -10,4 +10,7 @@ export class Crousel {
 
   @Column({ nullable: false })
   name: string;
+
+  @Column({ nullable: false })
+  priority: number;
 }

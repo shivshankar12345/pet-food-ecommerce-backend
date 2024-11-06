@@ -1,19 +1,21 @@
 import { Router } from "express";
-import LandingPageController from "../controllers/crousel.controller";
+import CrouselController from "../controllers/crousel.controller";
 import { upload } from "../middlewares/upload.middleware";
 
-const landingPageRouter = Router();
-const landingPageController = new LandingPageController();
+const crouselRouter = Router();
+const crouselController = new CrouselController();
 
-landingPageRouter.get("/getImages", landingPageController.getCrousel);
-landingPageRouter.post(
+crouselRouter.get("/getImages", crouselController.getCrousel);
+crouselRouter.post(
   "/addImage",
   upload.single("imageUrl"),
-  landingPageController.addCrousel
+  crouselController.addCrousel
 );
-landingPageRouter.delete(
-  "/deleteImage/:id",
-  landingPageController.deleteCrousel
+crouselRouter.patch(
+  "/updateImage/:id",
+  upload.single("imageUrl"),
+  crouselController.updateCrousel
 );
+crouselRouter.delete("/deleteImage/:id", crouselController.deleteCrousel);
 
-export default landingPageRouter;
+export default crouselRouter;
