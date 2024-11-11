@@ -10,6 +10,8 @@ export const createPet = async (
   next: NextFunction
 ) => {
   const { name, description } = req.body;
+  console.log(name,description)
+  console.log(req.body);
 
   const validationData = await checkRequiredValidation([
     { field: "Pet Name", value: name, type: "Empty" },
@@ -97,7 +99,7 @@ export const updatePetById = async (
   res: Response,
   next: NextFunction
 ) => {
-  const petId = req.params.id;
+  const petId = req.query.id;
   const { name, description } = req.body;
 
   const validationData = await checkRequiredValidation([
@@ -111,7 +113,7 @@ export const updatePetById = async (
 
   try {
     const existingPet = await PetRepository.findOne({
-      where: { id: petId, isDeleted: false },
+      where: { id: petId as string, isDeleted: false },
     });
 
     if (!existingPet) {

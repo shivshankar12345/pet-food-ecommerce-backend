@@ -5,6 +5,9 @@ export class Crousel {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, unique: true })
   imageUrl: string;
+
+  @Column({ nullable: false })
+  name: string;
 }

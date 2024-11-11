@@ -43,7 +43,7 @@ export const createProduct = async (
     ]);
 
     if (!validationData.status) {
-      throw new ApplicationError(400, "Validation is required");
+      throw new ApplicationError(400, "Validation is  hihahf required");
     }
 
     // Check if the pet type exists

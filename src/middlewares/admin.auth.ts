@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import ApplicationError from "../../error/ApplicationError";
-import { userRepository } from "../../repository/user.repository";
+import ApplicationError from "../error/ApplicationError";
+import { userRepository } from "../repository/user.repository";
 
 async function validateAdmin(req: Request, res: Response, next: NextFunction) {
   try {

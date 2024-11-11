@@ -1,7 +1,9 @@
-import ApplicationError from "../../error/ApplicationError";
-import { crouselRepository } from "../../repository/crousel.repository";
-import { CrouselObject } from "../../types/crousel.types";
-export default class AdminCrouselManageService {
+import ApplicationError from "../error/ApplicationError";
+import { crouselRepository } from "../repository/crousel.repository";
+import { CrouselObject } from "../types/crousel.types";
+import { deleteFromCloudinary, uploadToCloudinary } from "../utils/cloudinary";
+
+export default class CrouselService {
   async getCrouselData() {
     try {
       const data = await crouselRepository.find();
@@ -26,6 +28,7 @@ export default class AdminCrouselManageService {
       if (!crousel) {
         throw new ApplicationError(400, "Crousel not found !!");
       }
+      await deleteFromCloudinary(crousel.imageUrl);
       await crouselRepository.remove(crousel);
     } catch (error) {
       throw error;

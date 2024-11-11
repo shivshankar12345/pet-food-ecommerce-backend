@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import Responses from "../../modules/responses";
-import ApplicationError from "../../error/ApplicationError";
-import AdminPermissionManageService from "../../services/admin/admin.permission.service";
+import ApplicationError from "../error/ApplicationError";
+import Responses from "../modules/responses";
+import PermissionService from "../services/permission.service";
 
-const adminPermissionService = new AdminPermissionManageService();
-export default class AdminPermissionManageController {
+const permissionService = new PermissionService();
+export default class PermissionController {
   async createPermission(
     req: Request,
     res: Response,
@@ -22,7 +22,7 @@ export default class AdminPermissionManageController {
       ) {
         throw new ApplicationError(400, "Invalid Permission");
       }
-      await adminPermissionService.create({ permission });
+      await permissionService.create({ permission });
       Responses.generateSuccessResponse(res, 201, {
         message: "Permission Added",
       });
@@ -37,7 +37,7 @@ export default class AdminPermissionManageController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const permissions = await adminPermissionService.get();
+      const permissions = await permissionService.get();
       Responses.generateSuccessResponse(res, 200, { permissions });
     } catch (error) {
       next(error);

@@ -1,10 +1,10 @@
 import { QueryFailedError } from "typeorm";
-import { AppDataSource } from "../../db/data-source";
-import { Permission } from "../../entity/permission.entity";
-import ApplicationError from "../../error/ApplicationError";
+import { AppDataSource } from "../db/data-source";
+import { Permission } from "../entity/permission.entity";
+import ApplicationError from "../error/ApplicationError";
 
 const permissionRepository = AppDataSource.getRepository(Permission);
-export default class AdminPermissionManageService {
+export default class PermissionService {
   async create(permission: { permission: string }) {
     try {
       await permissionRepository.save(permission);
@@ -18,6 +18,7 @@ export default class AdminPermissionManageService {
       throw error;
     }
   }
+
   async get() {
     try {
       const permissions = await permissionRepository.find();
