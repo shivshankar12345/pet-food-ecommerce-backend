@@ -10,8 +10,6 @@ export const createPet = async (
   next: NextFunction
 ) => {
   const { name, description } = req.body;
-  console.log(name,description)
-  console.log(req.body);
 
   const validationData = await checkRequiredValidation([
     { field: "Pet Name", value: name, type: "Empty" },
