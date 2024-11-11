@@ -150,113 +150,6 @@
                       "type": "string"
                     },
                     "refreshToken": {
-            "description": "Returns OTP Id with Generated Time and Success Message",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "string"
-                        },
-                        "created_at": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "message": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request from User Side",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/users/validateOtp": {
-      "post": {
-        "tags": ["Users"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "OTP Id"
-                  },
-                  "email": {
-                    "type": "string",
-                    "description": "Email in which OTP is Sent"
-                  },
-                  "otp": {
-                    "type": "string",
-                    "description": "Otp which User Get on Email"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Validate the Otp and Get the Tokens",
-        "responses": {
-          "200": {
-            "description": "Ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "accessToken": {
-                      "type": "string"
-                    },
-                    "refreshToken": {
                       "type": "string"
                     },
                     "auth": {
@@ -303,30 +196,31 @@
                       "type": "boolean"
                     },
                     "message": {
-                    "auth": {
-                      "type": "boolean"
-                    },
-                    "role": {
-                      "type": "string",
-                      "enum": ["admin", "seller", "customer"]
-                    },
-                    "newUser": {
-                      "type": "boolean"
+                      "auth": {
+                        "type": "boolean"
+                      },
+                      "role": {
+                        "type": "string",
+                        "enum": ["admin", "seller", "customer"]
+                      },
+                      "newUser": {
+                        "type": "boolean"
+                      }
                     }
                   }
                 }
               }
-            }
-          },
-          "500": {
-            "description": "Error in Server Side",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": { "type": "string" },
-                    "message": { "type": "string" }
+            },
+            "500": {
+              "description": "Error in Server Side",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": { "type": "string" },
+                      "message": { "type": "string" }
+                    }
                   }
                 }
               }
