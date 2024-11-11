@@ -11,26 +11,59 @@
       "description": "local Address to Test the API"
     }
   ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "Bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [{ "bearerAuth": [] }],
   "paths": {
-    "/api/users": {
-      "get": {
-        "summary": "Get the list of All Users",
-        "tags": ["User"],
+    "/api/users/sendOtp": {
+      "post": {
+        "summary": "Get the OTP on Email for Login",
+        "tags": ["Users"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "A Json Array of Pet Application",
+            "description": "Returns OTP Id with Generated Time and Success Message",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "id": {
-                      "type": "integer"
+                    "success": {
+                      "type": "boolean"
                     },
-                    "name": {
-                      "type": "string"
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "created_at": {
+                          "type": "string"
+                        }
+                      }
                     },
-                    "email": {
+                    "message": {
                       "type": "string"
                     }
                   }
@@ -38,9 +71,239 @@
               }
             }
           },
-          "404": {},
-          "500": {}
+          "400": {
+            "description": "Bad Request from User Side",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
+      }
+    },
+    "/api/users/validateOtp": {
+      "post": {
+        "tags": ["Users"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "OTP Id"
+                  },
+                  "email": {
+                    "type": "string",
+                    "description": "Email in which OTP is Sent"
+                  },
+                  "otp": {
+                    "type": "string",
+                    "description": "Otp which User Get on Email"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Validate the Otp and Get the Tokens",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "accessToken": {
+                      "type": "string"
+                    },
+                    "refreshToken": {
+                      "type": "string"
+                    },
+                    "auth": {
+                      "type": "boolean"
+                    },
+                    "role": {
+                      "type": "string",
+                      "enum": ["admin", "seller", "customer"]
+                    },
+                    "newUser": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "In Case of OTP Expires, Empty Required fields, Incorrect OTP Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "In Case of Incorrect OTP",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error in Server Side",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "string" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/update": {
+      "patch": {
+        "tags": ["Users"],
+        "summary": "For Update User",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "gender": { "type": "string", "enum": ["m", "f", "o"] },
+                  "phone": { "type": "string" },
+                  "email": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {}
+      }
+    },
+    "/api/users/createSellerRequest": {
+      "patch": {
+        "tags": ["Users"],
+        "summary": "Raise a Seller Request by a Customer",
+        "requestBody": {},
+        "responses": {}
+      }
+    },
+    "/api/users/refreshToken": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Get the new Access Token using Refresh Token",
+        "requestBody": {},
+        "responses": {}
+      }
+    },
+    "/api/users/getUser": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get the User Information",
+        "requestBody": {},
+        "responses": {}
+      }
+    },
+    "/api/users/getAllUsers": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get All Users List",
+        "requestBody": {},
+        "responses": {}
+      }
+    },
+    "/api/users/getUserByStatus": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get Users By their Activation and Delete Status",
+        "requestBody": {},
+        "responses": {}
+      }
+    },
+    "/api/users/modifyUser": {
+      "patch": {
+        "tags": ["Users"],
+        "summary": "Modify User from Admin Side",
+        "requestBody": {},
+        "responses": {}
+      }
+    },
+    "/api/users/deleteUser/{id}": {
+      "delete": {
+        "tags": ["Users"],
+        "summary": "Delete a User from Admin Side",
+        "requestBody": {},
+        "responses": {}
+      }
+    },
+    "/api/users/getDeletedUser": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get the List of Deleted Users",
+        "requestBody": {},
+        "responses": {}
       }
     }
   }
