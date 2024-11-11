@@ -97,7 +97,7 @@ export const updatePetById = async (
   res: Response,
   next: NextFunction
 ) => {
-  const petId = req.params.id;
+  const petId = req.query.id;
   const { name, description } = req.body;
 
   const validationData = await checkRequiredValidation([
@@ -111,7 +111,7 @@ export const updatePetById = async (
 
   try {
     const existingPet = await PetRepository.findOne({
-      where: { id: petId, isDeleted: false },
+      where: { id: petId as string, isDeleted: false },
     });
 
     if (!existingPet) {
@@ -138,17 +138,17 @@ export const softDeletePet = async (
   res: Response,
   next: NextFunction
 ) => {
-  const petId = req.params.id;
-
-  const validationData = await checkRequiredValidation([
-    { field: "Pet ID", value: petId, type: "Empty" },
-  ]);
-
-  if (!validationData.status) {
-    return next(new ApplicationError(400, validationData.message));
-  }
-
+ 
   try {
+    const petId = req.query.id as string;
+
+    const validationData = await checkRequiredValidation([
+      { field: "Pet ID", value: petId, type: "Empty" },
+    ]);
+  
+    if (!validationData.status) {
+      return next(new ApplicationError(400, validationData.message));
+    }
     const pet = await PetRepository.findOne({
       where: { id: petId, isDeleted: false },
     });
