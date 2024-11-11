@@ -8,6 +8,7 @@ const crouselRouter = Router();
 const crouselController = new CrouselController();
 
 crouselRouter.get("/getImages", crouselController.getCrousel);
+
 crouselRouter.post(
   "/addImage",
   jwtAuth,
