@@ -1,7 +1,9 @@
 Steps to run this project:
 
 1. Run `npm i` command
-2. For Run the Project
+2. Before Run the Project Run the Migration File By this Command `npm run typeorm -- migration:run -d src/db/data-source.ts `
+3. If face Some Issues You can revert migration file by run this command `npm run typeorm -- migration:revert -d src/db/data-source.ts`
+4. For Run the Project
    i. Run `npm start` for started with node
    ii. Run `npm run dev` for started with nodemon
 
