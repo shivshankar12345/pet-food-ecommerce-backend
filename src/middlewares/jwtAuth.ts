@@ -19,7 +19,7 @@ function jwtAuth(
     }
     const token = authToken.split(" ")[1];
     if (!token) {
-      throw new ApplicationError(400, "Token not found");
+      throw new ApplicationError(400, "Invalid Token ");
     }
     const payload = AuthTokens.verifyAccessToken(token);
     (req as any).id = (payload as any).id;
@@ -31,16 +31,7 @@ function jwtAuth(
         tokenExpired: true,
       });
     }
-
-    if (error instanceof ApplicationError) {
-      return Responses.generateErrorResponse(res, error.statusCode, {
-        message: error.message,
-      });
-    }
-
-    Responses.generateErrorResponse(res, 401, {
-      message: "UnAuthorizedAccess",
-    });
+    next(error);
   }
 }
 

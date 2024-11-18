@@ -14,16 +14,25 @@ export default class UserService {
       }
 
       if (user.gst_num && updatedUser.gst_num) {
-        {
-          throw new ApplicationError(400, "Seller Request Already Created !!");
-        }
+        throw new ApplicationError(400, "Seller Request Already Created !!");
       }
+
       Object.assign(updatedUser, {
         ...user,
         updated_at: new Date().toISOString(),
       });
       await userRepository.save(updatedUser);
-      return updatedUser;
+      return {
+        name: updatedUser.name,
+        email: updatedUser.email,
+        phone: updatedUser.phone,
+        gender: updatedUser.gender,
+        is_active: updatedUser.is_active,
+        role: updatedUser.role.role_name,
+        pan_num: updatedUser.pan_num,
+        gst_num: updatedUser.gst_num,
+        rating: updatedUser.rating,
+      };
     } catch (error: any) {
       if (
         error instanceof QueryFailedError &&
@@ -63,7 +72,7 @@ export default class UserService {
     }
   }
 
-  async getUser(filter: UserOptional | Id) {
+  async getUser(filter: UserOptional | Id, select?: string[]) {
     try {
       const user = await userRepository.findOne({
         where: filter,
@@ -150,6 +159,12 @@ export default class UserService {
       Object.assign(user, data);
       await userRepository.save(user);
     } catch (error) {
+      if (
+        error instanceof QueryFailedError &&
+        error?.driverError?.message?.includes("Duplicate entry")
+      ) {
+        throw new ApplicationError(400, "Phone Already Exist ");
+      }
       throw error;
     }
   }
