@@ -2,7 +2,11 @@ import { NextFunction, Request, Response } from "express";
 import ApplicationError from "../error/ApplicationError";
 import { userRepository } from "../repository/user.repository";
 
-async function validateAdmin(req: Request, res: Response, next: NextFunction) {
+async function validateAdminAccount(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const user = await userRepository.findOne({
       where: { id: (req as any).id },
@@ -17,4 +21,4 @@ async function validateAdmin(req: Request, res: Response, next: NextFunction) {
     next(error);
   }
 }
-export default validateAdmin;
+export default validateAdminAccount;
