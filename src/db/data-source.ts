@@ -8,15 +8,19 @@ import { Category } from "../entity/category.entity";
 import { Contact } from "../entity/contact.entity";
 import { Crousel } from "../entity/crousel.entity";
 import { Pet } from "../entity/pet.entity";
+import dotenv from "dotenv";
+dotenv.config();
 
+const { DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DATABASE } = process.env;
 export const AppDataSource = new DataSource({
   type: "mysql",
-  host: process.env.DB_HOST,
-  port: parseInt(process.env.DB_PORT as string) || 4000,
-  username: process.env.DB_USERNAME || "",
-  password: process.env.DB_PASSWORD || "",
-  database: process.env.DATABASE || "",
+  host: DB_HOST,
+  port: DB_PORT ? parseInt(DB_PORT as string) : 4000,
+  username: DB_USERNAME || "",
+  password: DB_PASSWORD || "",
+  database: DATABASE || "",
   connectorPackage: "mysql2",
+  connectTimeout: 10000,
   entities: [
     Permission,
     Role,
@@ -29,6 +33,7 @@ export const AppDataSource = new DataSource({
     Pet,
   ],
   synchronize: false,
+  migrations: ["./src/migrations/**/*.ts"],
 });
 
 export const connectToDb = async () => {
