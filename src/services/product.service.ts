@@ -14,7 +14,7 @@ export class ProductService {
 
       return savedProduct;
     } catch (error) {
-      console.error("Error in createProduct service:", error); 
+      console.error("Error in createProduct service:", error);
       throw new ApplicationError(500, "Error creating product");
     }
   }
@@ -85,6 +85,21 @@ export class ProductService {
       await this.productRepository.save(existingProduct);
     } catch (error) {
       throw new ApplicationError(500, "Error deleting product");
+    }
+  }
+
+  async IsFeatured(id: string): Promise<Product | null> {
+    try {
+      const existingProduct = await this.getProductById(id);
+
+      if (!existingProduct) {
+        throw new ApplicationError(404, "Product not found");
+      }
+      existingProduct.IsFeatured = !existingProduct.IsFeatured;
+      await this.productRepository.save(existingProduct);
+      return existingProduct;
+    } catch (error) {
+      throw new ApplicationError(500, "Error in featuring product");
     }
   }
 }

@@ -15,4 +15,5 @@ export interface Product {
   petType: Pet;
   createdAt?: Date;
   updatedAt?: Date;
+  IsFeatured?:boolean;
 }

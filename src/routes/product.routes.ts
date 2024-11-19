@@ -5,6 +5,7 @@ import {
   getProductById,
   updateProduct,
   deleteProduct,
+  IsFeatured
 } from "../controllers/product.controller";
 import { upload } from "../middlewares/upload.middleware";
 
@@ -15,4 +16,5 @@ router.get("/getAllproducts", getAllProducts);
 router.get("/getProductById", getProductById);
 router.put("/update", upload.single("imageUrl"), updateProduct);
 router.delete("/delete", deleteProduct);
+router.patch("/isfeatured",IsFeatured);
 export default router;

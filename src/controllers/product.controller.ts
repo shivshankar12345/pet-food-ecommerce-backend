@@ -10,15 +10,12 @@ import { PetRepository } from "../repository/pet.repository";
 
 const productService = new ProductService();
 
-
 export const createProduct = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    console.log('Request Body:', req.body); // Log the incoming request body
-
     const {
       name,
       category: categoryName,
@@ -27,10 +24,9 @@ export const createProduct = async (
       stock,
       brandId,
       sellerId,
-      petType, 
+      petType,
     } = req.body;
 
-    // Validate required fields
     const validationData: any = await checkRequiredValidation([
       { field: "Name", value: name, type: "Empty" },
       { field: "Category", value: categoryName, type: "Empty" },
@@ -46,16 +42,14 @@ export const createProduct = async (
       throw new ApplicationError(400, "All fields are required");
     }
 
-    // Check if the pet type exists
     const existingPet = await PetRepository.findOne({
-      where: { name: petType }
+      where: { name: petType },
     });
 
     if (!existingPet) {
       throw new ApplicationError(400, "Invalid pet type");
     }
 
-    // Find the existing category by name
     const existingCategory = await categoryRepository.findOne({
       where: { name: categoryName },
     });
@@ -68,8 +62,6 @@ export const createProduct = async (
     if (!imageFile) {
       throw new ApplicationError(400, "Image file is required");
     }
-
-    // Upload image to Cloudinary
     const CloudinaryResponse = await uploadToCloudinary(imageFile, "products");
     const imageUrl = CloudinaryResponse.secure_url;
 
@@ -82,7 +74,7 @@ export const createProduct = async (
       imageUrl,
       brandId,
       sellerId,
-      petType: existingPet, 
+      petType: existingPet,
     };
 
     // Create the new product
@@ -93,7 +85,6 @@ export const createProduct = async (
     next(error);
   }
 };
-
 
 export const getAllProducts = async (
   req: Request,
@@ -198,37 +189,33 @@ export const updateProduct = async (
 
     const { petType, category } = req.body;
 
-     
-
     const existingPet = await PetRepository.findOne({
-      where:{name:petType}
-    })
-    if(!existingPet){
-      throw new ApplicationError(400,"Invalid Pet")
+      where: { name: petType },
+    });
+    if (!existingPet) {
+      throw new ApplicationError(400, "Invalid Pet");
     }
 
     const existingCategory = await categoryRepository.findOne({
-      where: { name:category },
+      where: { name: category },
     });
     if (!existingCategory) {
       throw new ApplicationError(400, "Invalid category");
     }
-
 
     let imageUrl;
     if (req.file) {
       const CloudinaryResponse = await uploadToCloudinary(req.file, "products");
       imageUrl = CloudinaryResponse.secure_url;
     } else {
-      imageUrl = existingProduct.imageUrl; 
+      imageUrl = existingProduct.imageUrl;
     }
 
-  
     const productData: Partial<ProductType> = {
       ...req.body,
       category: existingCategory,
       imageUrl,
-      petType:existingPet,
+      petType: existingPet,
       id: existingProduct.id,
       createdAt: existingProduct.createdAt,
       updatedAt: new Date(),
@@ -278,6 +265,46 @@ export const deleteProduct = async (
     return Responses.generateSuccessResponse(res, 200, {
       message: "Product deleted successfully",
     });
+  } catch (error) {
+    next(error);
+  }
+};
+export const IsFeatured = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = req.query.id as string | null;
+
+    if (!id) {
+      throw new ApplicationError(400, "Product ID is required.");
+    }
+
+    const validationData = await checkRequiredValidation([
+      { field: "Product ID", value: id, type: "Empty" },
+    ]);
+
+    if (!validationData.status) {
+      throw new ApplicationError(400, validationData.message);
+    }
+
+    const existingProduct = await productService.getProductById(id);
+
+    if (!existingProduct) {
+      throw new ApplicationError(404, "Product not found");
+    }
+    const updatedProduct = await productService.IsFeatured(id);
+    if (updatedProduct) {
+      return Responses.generateSuccessResponse(res, 200, {
+        message: updatedProduct.IsFeatured
+          ? "Product successfully featured"
+          : "Product removed from featuring section",
+        data: updatedProduct,
+      });
+    } else {
+      throw new ApplicationError(500, "Failed to update product status");
+    }
   } catch (error) {
     next(error);
   }

@@ -18,10 +18,7 @@ export const createPet = async (
   if (!validationData.status) {
     return next(new ApplicationError(400, validationData.message));
   }
-  const trimmedName = name.trim();
-  if (!trimmedName) {
-    return next(new ApplicationError(400, "Pet Name is required"));
-  }
+
   try {
     const newPet = PetRepository.create({ name, description });
     const savedPet = await PetRepository.save(newPet);
@@ -49,9 +46,9 @@ export const getAllPets = async (
     return res.status(200).json({
       data: pets,
       pagination: {
-        currentPage: page,
+        currentPage: page ||1,
         itemsPerPage: limit,
-        totalItems: total,
+        totalItems: total ||1,
         totalPages: Math.ceil(total/ limit), 
       },
     });
