@@ -49,7 +49,7 @@ export default class AuthTokens {
       );
       return payload;
     } catch (error) {
-      throw new ApplicationError(401, "UnAuthorizedAccess");
+      throw error;
     }
   }
 
@@ -61,7 +61,7 @@ export default class AuthTokens {
       );
       return payload;
     } catch (error) {
-      throw new ApplicationError(401, "UnAuthorizedAccess");
+      throw error;
     }
   }
 }

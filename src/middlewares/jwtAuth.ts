@@ -19,7 +19,7 @@ function jwtAuth(
     }
     const token = authToken.split(" ")[1];
     if (!token) {
-      throw new ApplicationError(400, "Token not found");
+      throw new ApplicationError(400, "Incorrect Token !!");
     }
     const payload = AuthTokens.verifyAccessToken(token);
     (req as any).id = (payload as any).id;
@@ -33,14 +33,10 @@ function jwtAuth(
     }
 
     if (error instanceof ApplicationError) {
-      return Responses.generateErrorResponse(res, error.statusCode, {
-        message: error.message,
-      });
+      next(error);
     }
 
-    Responses.generateErrorResponse(res, 401, {
-      message: "UnAuthorizedAccess",
-    });
+    next(new ApplicationError(401, "UnAuthorized Access"));
   }
 }
 
