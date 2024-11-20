@@ -3,6 +3,7 @@ import UserController from "../controllers/users.controller";
 import jwtAuth from "../middlewares/jwtAuth";
 import validateRefreshToken from "../middlewares/refreshToken.auth";
 import customerAuth from "../middlewares/customer.auth";
+import validateAdmin from "../middlewares/admin.auth";
 
 const userRouter = Router();
 const userController: UserController = new UserController();
@@ -28,14 +29,39 @@ userRouter.post(
 
 userRouter.get("/getUser", jwtAuth, userController.getUserInformation);
 
-userRouter.get("/getAllUsers", userController.getAllUsers);
+userRouter.get(
+  "/getAllUsers",
+  jwtAuth,
+  validateAdmin,
+  userController.getAllUsers
+);
 
-userRouter.get("/getUsersByStatus", userController.getUsersByStatus);
+userRouter.get(
+  "/getUsersByStatus",
+  jwtAuth,
+  validateAdmin,
+  userController.getUsersByStatus
+);
 
-userRouter.patch("/modifyUser", userController.modifyUser);
+userRouter.patch(
+  "/modifyUser",
+  jwtAuth,
+  validateAdmin,
+  userController.modifyUser
+);
 
-userRouter.delete("/deleteUser/:id", userController.deleteUser);
+userRouter.delete(
+  "/deleteUser/:id",
+  jwtAuth,
+  validateAdmin,
+  userController.deleteUser
+);
 
-userRouter.get("/getDeletedUser", userController.getDeletedUsers);
+userRouter.get(
+  "/getDeletedUser",
+  jwtAuth,
+  validateAdmin,
+  userController.getDeletedUsers
+);
 
 export default userRouter;

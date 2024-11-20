@@ -19,7 +19,7 @@ function jwtAuth(
     }
     const token = authToken.split(" ")[1];
     if (!token) {
-      throw new ApplicationError(400, "Incorrect Token !!");
+      throw new ApplicationError(400, "Invalid Token ");
     }
     const payload = AuthTokens.verifyAccessToken(token);
     (req as any).id = (payload as any).id;

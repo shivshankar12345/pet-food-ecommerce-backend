@@ -196,22 +196,31 @@
                       "type": "boolean"
                     },
                     "message": {
-                      "type": "string"
+                      "auth": {
+                        "type": "boolean"
+                      },
+                      "role": {
+                        "type": "string",
+                        "enum": ["admin", "seller", "customer"]
+                      },
+                      "newUser": {
+                        "type": "boolean"
+                      }
                     }
                   }
                 }
               }
-            }
-          },
-          "500": {
-            "description": "Error in Server Side",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": { "type": "string" },
-                    "message": { "type": "string" }
+            },
+            "500": {
+              "description": "Error in Server Side",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": { "type": "string" },
+                      "message": { "type": "string" }
+                    }
                   }
                 }
               }
@@ -231,9 +240,11 @@
                 "type": "object",
                 "properties": {
                   "name": { "type": "string" },
-                  "gender": { "type": "string", "enum": ["m", "f", "o"] },
+                  "email": { "type": "string" },
                   "phone": { "type": "string" },
-                  "email": { "type": "string" }
+                  "gender": { "type": "string", "enum": ["m", "f", "o"] },
+                  "pan_num": { "type": "string" },
+                  "gst_num": { "type": "string" }
                 }
               }
             }
