@@ -250,38 +250,60 @@
             }
           }
         },
+        "responses": {}
+      }
+    },
+    "/api/users/createSellerRequest": {
+      "patch": {
+        "tags": ["Users"],
+        "summary": "Raise a Seller Request by a Customer",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "gst_num": {
+                    "type": "string"
+                  },
+                  "pan_num": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Request Raised Successfully !!",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
                     "success": { "type": "boolean" },
-                    "user": {
-                      "type": "object",
-                      "properties": {
-                        "name": { "type": "string" },
-                        "email": { "type": "string" },
-                        "phone": { "type": "string" },
-                        "gender": { "type": "string", "enum": ["m", "f", "o"] },
-                        "pan_num": { "type": "string" },
-                        "gst_num": { "type": "string" },
-                        "rating": { "type": "number" },
-                        "role": {
-                          "type": "string",
-                          "enum": ["admin", "customer", "role"]
-                        }
-                      }
-                    }
+                    "message": { "type": "string" }
                   }
                 }
               }
             }
           },
           "400": {
-            "description": "At Least one Field is Required !!",
+            "description": "Fields Not Provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UnAuthorized Access ! Need to login",
             "content": {
               "application/json": {
                 "schema": {
@@ -295,8 +317,231 @@
             }
           },
           "403": {
-            "description": "Token Expired ",
+            "description": "Token Expired !!",
             "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" },
+                    "tokenExpired": { "type": "boolean" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error !!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/refreshToken": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Get the new Access Token using Refresh Token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "refreshToken": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "description": "OK",
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "accessToken": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "description": "Provide Refresh Token !!",
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "description": "UnAuthorized Access ! Need to login",
+              "application/json": {
+                "schema": { "type": "object", "properties": {} }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "description": "Internal Server Error !!",
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/getUser": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get the User Information",
+        "responses": {
+          "200": {
+            "content": {
+              "description": "OK",
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "phone": {
+                          "type": "string"
+                        },
+                        "gender": {
+                          "type": "string",
+                          "enum": ["m", "f", "o"]
+                        },
+                        "is_active": {
+                          "type": "boolean"
+                        },
+                        "sellerRequest": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "description": "Please Login First",
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "description": "Token Expired !!",
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "description": "Internal Server Error !!",
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/getAllUsers": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get All Users List",
+        "responses": {
+          "200": {
+            "content": {
+              "description": "OK",
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "users": {},
+                    "current_page": {},
+                    "total_pages": {}
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "description": "UnAuthorized Access !!",
+              "application/json": {
+                "schema": { "type": "object", "properties": {} }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "description": "Token Expired !!",
               "application/json": {
                 "schema": {
                   "type": "object",
@@ -315,26 +560,47 @@
               }
             }
           },
-          "404": {
-            "description": "User not found",
+          "500": {
             "content": {
+              "description": "Internal Server Error !!",
               "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    }
-                  }
-                }
+                "schema": { "type": "object", "properties": {} }
               }
             }
-          },
-          "500": {}
+          }
         }
+      }
+    },
+    "/api/users/getUserByStatus": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get Users By their Activation and Delete Status",
+        "requestBody": {},
+        "responses": {}
+      }
+    },
+    "/api/users/modifyUser": {
+      "patch": {
+        "tags": ["Users"],
+        "summary": "Modify User from Admin Side",
+        "requestBody": {},
+        "responses": {}
+      }
+    },
+    "/api/users/deleteUser/{id}": {
+      "delete": {
+        "tags": ["Users"],
+        "summary": "Delete a User from Admin Side",
+        "requestBody": {},
+        "responses": {}
+      }
+    },
+    "/api/users/getDeletedUser": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get the List of Deleted Users",
+        "requestBody": {},
+        "responses": {}
       }
     }
   }

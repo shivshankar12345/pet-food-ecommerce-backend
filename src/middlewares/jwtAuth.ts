@@ -31,7 +31,12 @@ function jwtAuth(
         tokenExpired: true,
       });
     }
-    next(error);
+
+    if (error instanceof ApplicationError) {
+      next(error);
+    }
+
+    next(new ApplicationError(401, "UnAuthorized Access"));
   }
 }
 

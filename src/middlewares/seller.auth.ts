@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import ApplicationError from "../error/ApplicationError";
 import { userRepository } from "../repository/user.repository";
 
-const validateCustomerAccount = async (
+const validateSellerAccount = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -17,10 +17,14 @@ const validateCustomerAccount = async (
       throw new ApplicationError(400, "Please Login first ");
     }
 
-    if (userExist.role.role_name != "customer") {
+    if (userExist.role.role_name != "seller") {
+      throw new ApplicationError(400, "Only Seller Can access this Page !!");
+    }
+
+    if (!userExist.is_verified) {
       throw new ApplicationError(
         400,
-        "Only Customer is Allowed to Raise the Request"
+        "you need to verify your acount ! Please Contact Admin"
       );
     }
     next();
@@ -29,4 +33,4 @@ const validateCustomerAccount = async (
   }
 };
 
-export default validateCustomerAccount;
+export default validateSellerAccount;
