@@ -309,3 +309,33 @@ export const IsFeatured = async (
     next(error);
   }
 };
+
+export const getSellerListedProducts = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req as any;
+    let { limit, page_num, search = "" } = req.query;
+    const limitOfDocs = limit ? parseInt(limit as string) : 10;
+    const skipElements =
+      (page_num ? parseInt(page_num as string) - 1 : 0) * limitOfDocs;
+    const data = await productService.getListedProducts(
+      id,
+      skipElements,
+      limitOfDocs,
+      search as string
+    );
+    const total_pages =
+      (Math.trunc(data.total_products / limitOfDocs) ==
+      data.total_products / limitOfDocs
+        ? data.total_products / limitOfDocs
+        : Math.trunc(data.total_products / limitOfDocs) + 1) || 1;
+    return Responses.generateSuccessResponse(res, 200, {
+      data: { ...data, current_page: page_num || 1, total_pages },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
