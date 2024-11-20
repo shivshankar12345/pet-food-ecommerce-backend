@@ -41,7 +41,7 @@ export class ProductService {
 
       return { products, total };
     } catch (error) {
-      throw new ApplicationError(500, "Error fetching products");
+      throw error;
     }
   }
 
@@ -100,6 +100,46 @@ export class ProductService {
       return existingProduct;
     } catch (error) {
       throw new ApplicationError(500, "Error in featuring product");
+    }
+  }
+
+  async getListedProducts(
+    user: string,
+    skip: number,
+    take: number,
+    search: string
+  ) {
+    try {
+      const products = await this.productRepository.find({
+        take,
+        skip,
+        where: [
+          {
+            sellerId: user,
+            name: Like(`%${search}%`),
+          },
+          {
+            sellerId: user,
+            description: Like(`%${search}%`),
+          },
+        ],
+        select: ["id", "name", "description", "stock", "imageUrl", "price"],
+      });
+      const total_products = await this.productRepository.count({
+        where: [
+          {
+            sellerId: user,
+            name: Like(`%${search}%`),
+          },
+          {
+            sellerId: user,
+            description: Like(`%${search}%`),
+          },
+        ],
+      });
+      return { products, total_products };
+    } catch (error) {
+      throw error;
     }
   }
 }
