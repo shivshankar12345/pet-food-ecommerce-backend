@@ -61,13 +61,14 @@ export default class UserService {
         where: { role_name: "customer" },
       });
       if (!role) {
-        throw new Error("");
+        throw new ApplicationError(400,"Something went Wrong !!")
       }
 
       const createUser = userRepository.create({ ...user, role });
       const newUser = await userRepository.save(createUser);
       return { user: newUser, newUser: true };
     } catch (error) {
+      console.log(error)
       throw error;
     }
   }

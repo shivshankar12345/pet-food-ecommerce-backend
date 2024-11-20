@@ -44,7 +44,9 @@ export class Product {
   @ManyToOne(() => Pet,pet => pet.products)
   @JoinColumn({ name: "PetType" })
   petType: Pet;
-
+  
+   @Column({default:false})
+   IsFeatured :boolean;
   @Column({ default: false })
   isDeleted: boolean;
 
