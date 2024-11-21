@@ -9,6 +9,7 @@ import { Contact } from "../entity/contact.entity";
 import { Crousel } from "../entity/crousel.entity";
 import { Pet } from "../entity/pet.entity";
 import dotenv from "dotenv";
+import { Cart } from "../entity/cart.entity";
 dotenv.config();
 
 const { DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DATABASE } = process.env;
@@ -31,6 +32,7 @@ export const AppDataSource = new DataSource({
     Contact,
     Crousel,
     Pet,
+    Cart,
   ],
   synchronize: false,
   migrations: ["./src/migrations/**/*.ts"],
