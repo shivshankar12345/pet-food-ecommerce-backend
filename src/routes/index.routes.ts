@@ -10,6 +10,7 @@ import permissionRouter from "./permission.routes";
 import roleRouter from "./role.routes";
 import sellerRouter from "./seller.routes";
 import validateAdmin from "../middlewares/admin.auth";
+import cartRouter from "./cart.routes";
 
 const mainRouter = Router();
 
@@ -31,4 +32,5 @@ mainRouter.use("/contact", contactRouter);
 
 mainRouter.use("/role", jwtAuth, validateAdmin, roleRouter);
 
+mainRouter.use("/cart", jwtAuth, cartRouter);
 export default mainRouter;
