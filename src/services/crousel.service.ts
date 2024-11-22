@@ -2,7 +2,7 @@ import { Like } from "typeorm";
 import ApplicationError from "../error/ApplicationError";
 import { crouselRepository } from "../repository/crousel.repository";
 import { CrouselObject } from "../types/crousel.types";
-import { deleteFromCloudinary, uploadToCloudinary } from "../utils/cloudinary";
+import { deleteFromCloudinary } from "../utils/cloudinary";
 
 export default class CrouselService {
   async getCrouselData(take: number, search: string, skip: number) {
