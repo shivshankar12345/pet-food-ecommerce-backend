@@ -25,6 +25,7 @@ export const createProduct = async (
       brandId,
       sellerId,
       petType,
+      discounted_percentage,
     } = req.body;
 
     const validationData: any = await checkRequiredValidation([
@@ -36,6 +37,7 @@ export const createProduct = async (
       { field: "Brand ID", value: brandId, type: "Empty" },
       { field: "Seller ID", value: sellerId, type: "Empty" },
       { field: "Pet Type", value: petType, type: "Empty" },
+      {field:"discounted percentage", value:discounted_percentage,type:"Empty"}
     ]);
 
     if (!validationData.status) {
@@ -65,6 +67,9 @@ export const createProduct = async (
     const CloudinaryResponse = await uploadToCloudinary(imageFile, "products");
     const imageUrl = CloudinaryResponse.secure_url;
 
+    const discounted_price = discounted_percentage>0 ? (price - price*(discounted_percentage/100)):price;
+
+    
     const productData: ProductType = {
       name,
       category: existingCategory,
@@ -74,6 +79,8 @@ export const createProduct = async (
       imageUrl,
       brandId,
       sellerId,
+      discounted_percentage,
+      discounted_price,
       petType: existingPet,
     };
 

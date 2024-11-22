@@ -48,7 +48,7 @@ export class Product {
   discounted_percentage: number;
 
   @ManyToOne(() => Pet, pet => pet.products)
-  @JoinColumn({ name: "pet_type_id" }) 
+  @JoinColumn({ name: "pet_type" }) 
   petType: Pet;
 
   @Column({ default: false })
