@@ -167,7 +167,6 @@ export const getProductById = async (
     next(error);
   }
 };
-
 export const updateProduct = async (
   req: Request,
   res: Response,
@@ -189,13 +188,15 @@ export const updateProduct = async (
       throw new ApplicationError(400, validationData.message);
     }
 
+    // Fetch existing product
     const existingProduct = await productService.getProductById(id);
     if (!existingProduct) {
       throw new ApplicationError(404, "Product not found");
     }
 
-    const { petType, category } = req.body;
+    const { petType, category, discounted_percentage } = req.body;
 
+    // Validate Pet Type
     const existingPet = await PetRepository.findOne({
       where: { name: petType },
     });
@@ -203,43 +204,57 @@ export const updateProduct = async (
       throw new ApplicationError(400, "Invalid Pet");
     }
 
+    // Validate Category
     const existingCategory = await categoryRepository.findOne({
       where: { name: category },
     });
     if (!existingCategory) {
       throw new ApplicationError(400, "Invalid category");
     }
+    const price = existingProduct.price
+    let discountedPrice: number = existingProduct.discounted_price; // Default to existing price
+    if (price && discounted_percentage !== undefined) {
+      discountedPrice = price - (price * discounted_percentage) / 100;
+    }
 
-    let imageUrl;
+    // Handle Image Upload
+    let imageUrl = existingProduct.imageUrl; // Default to existing image URL
     if (req.file) {
       const CloudinaryResponse = await uploadToCloudinary(req.file, "products");
       imageUrl = CloudinaryResponse.secure_url;
-    } else {
-      imageUrl = existingProduct.imageUrl;
     }
 
+    // Prepare updated product data
     const productData: Partial<ProductType> = {
       ...req.body,
+      price,
+      discounted_price: discountedPrice, // Ensure two decimal precision
+      discounted_percentage,
       category: existingCategory,
-      imageUrl,
       petType: existingPet,
-      id: existingProduct.id,
-      createdAt: existingProduct.createdAt,
+      imageUrl,
       updatedAt: new Date(),
     };
 
+    // Ensure the product data includes the necessary fields to update
+    console.log('Product Data to be updated:', productData);
+
+    // Update product
     const updatedProduct = await productService.updateProduct(
       existingProduct.id,
       productData
     );
 
+    // Return success response
     return Responses.generateSuccessResponse(res, 200, {
       data: updatedProduct,
     });
   } catch (error) {
+    console.error("Error in updateProduct:", error);
     next(error);
   }
 };
+
 
 export const deleteProduct = async (
   req: Request,

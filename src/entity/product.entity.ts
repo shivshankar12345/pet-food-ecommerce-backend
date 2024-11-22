@@ -47,8 +47,8 @@ export class Product {
   @Column({ name: "discounted_percentage", type: "decimal", precision: 5, scale: 2, default: 0 })
   discounted_percentage: number;
 
-  @ManyToOne(() => Pet, pet => pet.products)
-  @JoinColumn({ name: "pet_type" }) 
+  @ManyToOne(() => Pet,pet => pet.products)
+  @JoinColumn({ name: "PetType" })
   petType: Pet;
 
   @Column({ default: false })
