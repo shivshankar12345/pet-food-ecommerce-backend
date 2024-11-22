@@ -41,12 +41,19 @@ export class Product {
   @Column({ name: "seller_id" })
   sellerId: string;
 
-  @ManyToOne(() => Pet,pet => pet.products)
-  @JoinColumn({ name: "PetType" })
+  @Column({ name: "discounted_price", type: "decimal", precision: 10, scale: 2 })
+  discounted_price: number;
+
+  @Column({ name: "discounted_percentage", type: "decimal", precision: 5, scale: 2, default: 0 })
+  discounted_percentage: number;
+
+  @ManyToOne(() => Pet, pet => pet.products)
+  @JoinColumn({ name: "pet_type_id" }) 
   petType: Pet;
-  
-   @Column({default:false})
-   IsFeatured :boolean;
+
+  @Column({ default: false })
+  IsFeatured: boolean;
+
   @Column({ default: false })
   isDeleted: boolean;
 
