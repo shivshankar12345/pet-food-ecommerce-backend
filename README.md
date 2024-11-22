@@ -11,7 +11,7 @@ Mainly Project is Run on PORT : 8000
 
 if You face issue to run the Server Just Open CMD by Administrator Permission and Type Following Command :
 
-i. netstat -ano | findstr :8000
+i. netstat -ano | findstr :4000
 
 This Command Shows you the Currently Running process on PORT 8000, along with the Process Id which will be at the End of the row, This ProcessId helps us to kill the Process and Start our Server on PORT 8000
 For Kill the Existing Running Process on PORT 8000 Type following Command :

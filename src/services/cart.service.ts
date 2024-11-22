@@ -26,7 +26,7 @@ export default class CartService {
         select: ["id"],
       });
       if (!product) {
-        throw new ApplicationError(404, "User not found !!");
+        throw new ApplicationError(404, "Product not found !!");
       }
       return product;
     } catch (error) {
@@ -49,7 +49,7 @@ export default class CartService {
         qty: 1,
       });
       await cartRepository.save(newCartItem);
-      return newCartItem;
+      return { ...newCartItem, user_id: user.id, product_id: product.id };
     } catch (error) {
       throw error;
     }
@@ -76,8 +76,12 @@ export default class CartService {
       const user = await this.getUser(user_id);
       const cartItem = await cartRepository.findOne({
         where: { user_id: user, id },
+        relations: { user_id: true, product_id: true },
       });
-      return cartItem;
+      if (!cartItem) {
+        throw new ApplicationError(404, "Cart Item not found !!");
+      }
+      return { ...cartItem, user_id: cartItem.user_id.id };
     } catch (error) {
       throw error;
     }
@@ -92,7 +96,7 @@ export default class CartService {
       if (!cartItem) {
         throw new ApplicationError(404, "Cart Item not found");
       }
-      if (qty < 0 && cartItem.qty < -qty) {
+      if (qty < 0 && cartItem.qty <= -qty) {
         throw new ApplicationError(400, "Quantity Should not be Nagative !!");
       }
       cartItem.qty += qty;
