@@ -16,4 +16,6 @@ export interface Product {
   createdAt?: Date;
   updatedAt?: Date;
   IsFeatured?:boolean;
+  discounted_percentage?:number;
+  discounted_price?:number;
 }
