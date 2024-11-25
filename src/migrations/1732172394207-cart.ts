@@ -9,5 +9,4 @@ export class Cart1732172394207 implements MigrationInterface {
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.dropTable("cart");
     }
-
 }
