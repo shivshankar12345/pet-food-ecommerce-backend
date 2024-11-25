@@ -7,6 +7,7 @@ export class IsFeatureInProduct1732096763061 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.dropColumn("Products","IsFeatured");
     }
 
 }
