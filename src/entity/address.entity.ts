@@ -31,7 +31,7 @@ export class Address {
   area: string;
 
   @Column({ nullable: false })
-  pin_code: string;
+  pincode: string;
 
   @Column({ nullable: false })
   city: string;
@@ -45,4 +45,10 @@ export class Address {
     default: AddressType.HOME,
   })
   address_type: AddressType;
+
+  @Column({ nullable: false })
+  name: string;
+
+  @Column({ nullable: false })
+  phone_num: string;
 }

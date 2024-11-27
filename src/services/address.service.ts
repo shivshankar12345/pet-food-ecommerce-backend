@@ -20,8 +20,7 @@ export default class AddressService {
     try {
       const user = await this.getUser(user_id);
       (address as any).user_id = user;
-      const data = userRepository.create(address);
-      await addressRepository.save(data);
+      const data = await addressRepository.save(address);
       return data;
     } catch (error) {
       throw error;
@@ -64,7 +63,6 @@ export default class AddressService {
       const user = await this.getUser(user_id);
       const addresses = await addressRepository.find({
         where: { user_id: user },
-        relations: { user_id: true },
       });
       return addresses;
     } catch (error) {
