@@ -8,13 +8,13 @@ import {
 import { User } from "./user.entity"; // User entity
 import { DiscountCoupon } from "./discount.entity"; // DiscountCoupon entity
 import { Cart } from "./cart.entity"; // Cart entity
-
+import { Address } from "./address.entity";
 @Entity("orders")
 export class Order {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
-  @ManyToOne(() => User, (user) => user.orders, { eager: true })
+  @ManyToOne(() => User, (user) => user.order, { eager: true })
   user: User;
 
   @ManyToOne(() => Cart, { eager: true })
@@ -22,10 +22,10 @@ export class Order {
   cart: Cart;
 
   // Placeholder for shippingAddress (stored as a string temporarily)
-  @Column({ type: "varchar", nullable: true })
-  shippingAddress: string; // This can be updated later to a proper relation
+  @ManyToOne(()=>Address,(address)=>address.orders)
+  Address: string; // This can be updated later to a proper relation
 
-  @ManyToOne(() => DiscountCoupon, (coupon) => coupon.orders, {
+  @ManyToOne(() => DiscountCoupon, (coupon) => coupon.order, {
     nullable: true,
     eager: true,
   })

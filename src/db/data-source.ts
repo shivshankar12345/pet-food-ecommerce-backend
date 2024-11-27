@@ -37,7 +37,7 @@ export const AppDataSource = new DataSource({
     Pet,
     Cart,
     DiscountCoupon,
-    Order
+    Order,
     Address,
   ],
   synchronize: false,
