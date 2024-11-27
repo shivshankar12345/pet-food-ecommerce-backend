@@ -31,7 +31,7 @@ export class DiscountCoupon {
   usageLimit: number; 
 
   @OneToMany(() => Order, order => order.discountCoupon)
-  orders: Order[];
+  order: Order[];
 
   @CreateDateColumn()
   createdAt: Date;
