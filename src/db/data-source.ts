@@ -10,6 +10,8 @@ import { Crousel } from "../entity/crousel.entity";
 import { Pet } from "../entity/pet.entity";
 import dotenv from "dotenv";
 import { Cart } from "../entity/cart.entity";
+import { DiscountCoupon } from "../entity/discount.entity";
+import { Order } from "../entity/order.entity";
 import { Address } from "../entity/address.entity";
 dotenv.config();
 
@@ -34,6 +36,8 @@ export const AppDataSource = new DataSource({
     Crousel,
     Pet,
     Cart,
+    DiscountCoupon,
+    Order,
     Address,
   ],
   synchronize: false,

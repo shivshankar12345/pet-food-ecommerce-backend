@@ -11,6 +11,7 @@ import roleRouter from "./role.routes";
 import sellerRouter from "./seller.routes";
 import validateAdmin from "../middlewares/admin.auth";
 import cartRouter from "./cart.routes";
+import discountRouter from "./discount.routes";
 import addressRouter from "./address.routes";
 
 const mainRouter = Router();
@@ -30,6 +31,7 @@ mainRouter.use("/crousel", landingPageRouter);
 mainRouter.use("/permission", jwtAuth, validateAdmin, permissionRouter);
 
 mainRouter.use("/contact", contactRouter);
+mainRouter.use("/discount", discountRouter);
 
 mainRouter.use("/role", jwtAuth, validateAdmin, roleRouter);
 

@@ -4,8 +4,10 @@ import {
   PrimaryGeneratedColumn,
   JoinColumn,
   ManyToOne,
+  OneToMany,
 } from "typeorm";
 import { Role } from "./role.entity";
+import { Order } from "./order.entity";
 
 @Entity("User")
 export class User {
@@ -54,4 +56,8 @@ export class User {
 
   @Column({ type: "timestamp", default: null })
   updated_at: string;
+    orders: any;
+
+  @OneToMany(() => Order, (order) => order.user)
+  order: Order[];
 }

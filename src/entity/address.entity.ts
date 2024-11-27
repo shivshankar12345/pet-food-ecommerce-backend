@@ -4,8 +4,10 @@ import {
   JoinColumn,
   PrimaryGeneratedColumn,
   ManyToOne,
+  OneToMany,
 } from "typeorm";
 import { User } from "./user.entity";
+import { Order } from "./order.entity";
 
 enum AddressType {
   HOME = "home",
@@ -51,4 +53,8 @@ export class Address {
 
   @Column({ nullable: false })
   phone_num: string;
+  
+  @OneToMany(()=> Order,(order)=>order.Address)
+  orders:Order[]
+
 }
