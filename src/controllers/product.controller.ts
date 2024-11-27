@@ -361,3 +361,65 @@ export const getSellerListedProducts = async (
     next(error);
   }
 };
+
+// export const getProductByPetType = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   try {
+//     const { petType } = req.query;
+//     const page = parseInt(req.query.page as string) || 1;
+//     const limit = parseInt(req.query.limit as string) || 10;
+//     const search = (req.query.search as string)?.trim() || "";
+
+//     // Validate the petType parameter
+//     if (!petType) {
+//       throw new ApplicationError(400, "Pet type is required");
+//     }
+
+//     // Check if the petType exists in the database
+//     const existingPet = await PetRepository.findOne({
+//       where: { name: petType },
+//     });
+
+//     if (!existingPet) {
+//       throw new ApplicationError(400, "Invalid pet type");
+//     }
+
+//     // Fetch products by petType with optional search and pagination
+//     const { products, total } = await productService.getProductsByPetType(
+//       petType as string,
+//       page,
+//       limit,
+//       search
+//     );
+
+//     // Check if no products are found
+//     if (!products.length) {
+//       return Responses.generateSuccessResponse(res, 200, {
+//         data: [],
+//         pagination: {
+//           currentPage: page,
+//           itemsPerPage: limit,
+//           totalItems: total,
+//           totalPages: 0,
+//         },
+//       });
+//     }
+
+//     // Return success response with pagination details
+//     return Responses.generateSuccessResponse(res, 200, {
+//       data: products,
+//       pagination: {
+//         currentPage: page,
+//         itemsPerPage: limit,
+//         totalItems: total,
+//         totalPages: Math.ceil(total / limit),
+//       },
+//     });
+//   } catch (error) {
+//     console.error("Error in getProductByPetType:", error);
+//     next(error);
+//   }
+// };

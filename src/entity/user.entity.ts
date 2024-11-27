@@ -54,4 +54,5 @@ export class User {
 
   @Column({ type: "timestamp", default: null })
   updated_at: string;
+    orders: any;
 }

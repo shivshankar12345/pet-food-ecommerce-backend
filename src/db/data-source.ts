@@ -10,6 +10,7 @@ import { Crousel } from "../entity/crousel.entity";
 import { Pet } from "../entity/pet.entity";
 import dotenv from "dotenv";
 import { Cart } from "../entity/cart.entity";
+import { DiscountCoupon } from "../entity/discount.entity";
 dotenv.config();
 
 const { DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DATABASE } = process.env;
@@ -33,6 +34,7 @@ export const AppDataSource = new DataSource({
     Crousel,
     Pet,
     Cart,
+    DiscountCoupon
   ],
   synchronize: false,
   migrations: ["./src/migrations/**/*.ts"],

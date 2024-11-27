@@ -41,7 +41,7 @@ export class Product {
   @Column({ name: "seller_id" })
   sellerId: string;
 
-  @Column({ name: "discounted_price", type: "decimal", precision: 10, scale: 2 })
+  @Column({ name: "discounted_price", type: "decimal", precision: 10, scale: 2})
   discounted_price: number;
 
   @Column({ name: "discounted_percentage", type: "decimal", precision: 5, scale: 2, default: 0 })
